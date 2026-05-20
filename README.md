@@ -1,8 +1,23 @@
 # Intent Router Skill
 
+English | [中文 README](README.zh-CN.md)
+
 An installable agent skill for routing user intent to the right skill, plugin, connector, app tool, or direct workflow.
 
-It is meant for people who have a growing skill library and do not want to memorize every skill name. The router treats each request like a small RAG query: understand the intent, retrieve candidate routes, check evidence, rerank, explain the route, and then recommend or execute.
+It is for people whose skill/plugin library has become useful enough to become hard to remember. The router treats each request like a small RAG query: understand intent, retrieve candidate routes, check evidence, rerank, expose the routing reason, then recommend or execute.
+
+```mermaid
+flowchart LR
+  A["User request"] --> B["Query facets<br/>intent, output, risk, dependency"]
+  B --> C["Retrieve candidates<br/>skill-map.md"]
+  C --> D["Evidence check<br/>triggers, anti-cues, caveats"]
+  D --> E["Rerank<br/>1 primary + up to 2 backups"]
+  E --> F{"Gate needed?"}
+  F -->|"paid quota / deploy / cloud write"| G["Ask approval"]
+  F -->|"safe or read-only"| H["Visible routing note"]
+  G --> H
+  H --> I["Open selected SKILL.md<br/>or use plugin/tool/direct route"]
+```
 
 ## Why This Exists
 
@@ -10,15 +25,52 @@ Large skill libraries fail in a predictable way: users install many useful tools
 
 This public version is designed to avoid common adoption failures:
 
-- No personal paths, accounts, or private project names in the default map.
-- Clear installation and customization steps.
-- A visible routing note so users know why a route was chosen.
-- Cost, quota, deployment, sharing, deletion, and cloud-write gates.
-- Plugin and connector preflight instead of pretending unavailable tools were used.
-- A small golden-case eval file that maintainers can review manually or with subagents.
-- A route map that users are expected to edit for their own installed skills.
+| Failure users feel | Built-in mitigation |
+|---|---|
+| "It recommended something I do not have." | Local inventory helper and customizable `skill-map.md`. |
+| "It silently deployed or spent quota." | Cost and external side-effect gates. |
+| "It pretended a plugin was available." | Plugin/connector callability preflight. |
+| "It gave me a giant skill directory." | One primary route and at most two backups. |
+| "I cannot tell why it chose that." | Visible routing note for non-trivial requests. |
+| "It only works for the author's setup." | Generic starter route cards and personalization slots. |
 
 See [references/failure-checklist.md](references/failure-checklist.md) for the full audience failure checklist.
+
+## What Users See
+
+The router should not just say a skill name. It should show a compact route trace:
+
+```markdown
+Routing note: detected editable presentation output;
+candidates were presentation route, polished PDF route, academic planning route;
+selected presentation route because the user asked for editable PPTX;
+did not use polished PDF route because PDF is not the requested output;
+next step: inspect source material or ask for slide constraints.
+```
+
+Then it should name one primary route and at most two auxiliary routes:
+
+```markdown
+Primary: `presentation route` - best for editable `.pptx` decks.
+Also consider:
+- `academic planning route` - if grading/rubric alignment matters.
+- `repo audit route` - if the slides need evidence from a codebase.
+```
+
+## Successful Routing Examples
+
+These examples come from manual golden-case testing of the router pattern. They are included to make the expected behavior concrete.
+
+| User request | Expected routing result | Why it passed |
+|---|---|---|
+| "I want to make an FYP presentation deck. Recommend only." | Primary: presentation/PPTX route. Backup: rubric or repo-audit route. | It respected recommendation-only mode and prioritized editable slides over polished PDF. |
+| "Which plugin should I use to search my cloud documents? Recommend only." | Primary: plugin recommendation route. | It recommended instead of installing or executing a connector search. |
+| "Use a Slack connector to find the latest team decision." | Primary: plugin/connector preflight route. | It checked callability before claiming the connector was used. |
+| "Run the OpenAI API to embed this folder." | Primary: metered API route with approval gate. | It treated API key presence as not enough for paid/quota-consuming calls. |
+| "Deploy this app to production." | Primary: deployment route with external side-effect confirmation. | It confirmed target/environment/public-vs-private risk before mutating external state. |
+| "Install this new skill from GitHub." | Primary: skill install/update route plus router sync. | It updates the route map after skill changes instead of requiring a second sync request. |
+| "Do not recommend this skill anymore." | Primary: disable/hold route. | It did not delete files when the user only asked to stop recommending. |
+| "Review this router skill. Do not change files." | Primary: read-only review route. | It treated the named skill as the artifact under review and avoided edits/sync. |
 
 ## Attribution
 
@@ -43,6 +95,22 @@ Then restart or refresh your agent session so the new skill appears in the activ
 If you use a skill installer that supports GitHub repositories, install this repository root as the skill source because `SKILL.md` is at the repo root.
 
 ## Configure
+
+```mermaid
+sequenceDiagram
+  participant U as User
+  participant R as intent-router
+  participant I as Inventory script
+  participant M as skill-map.md
+  participant E as eval cases
+
+  U->>I: list installed skills
+  I-->>U: skill names + descriptions
+  U->>M: add high-frequency route cards
+  U->>E: add golden cases for risky overlaps
+  U->>R: ask "which skill/plugin/tool?"
+  R-->>U: visible routing note + primary route
+```
 
 1. Run the inventory helper:
 
@@ -80,16 +148,6 @@ I do not know which skill to use. I want to turn a rough app idea into an implem
 Route this request, but only recommend. Do not execute anything yet.
 ```
 
-## Expected Output Shape
-
-For non-trivial routed requests, the skill should expose a short route note:
-
-```markdown
-Routing note: detected <user cue>; candidates were <A>, <B>, <direct route>; selected <primary> because <evidence>; did not use <candidate> because <negative evidence>; next step: <first observable action>.
-```
-
-Then it should name one primary route and at most two auxiliary routes.
-
 ## What This Skill Does Not Do
 
 - It is not a background filesystem watcher.
@@ -102,6 +160,8 @@ Then it should name one primary route and at most two auxiliary routes.
 
 ```text
 SKILL.md
+README.md
+README.zh-CN.md
 references/
   failure-checklist.md
   router-eval-cases.md
