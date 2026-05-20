@@ -1,4 +1,4 @@
-# Intent Router Skill 中文版
+# Intent Router Skill
 
 [English README](README.md) | 中文
 
