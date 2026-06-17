@@ -36,6 +36,20 @@ This public version is designed to avoid common adoption failures:
 
 See [references/failure-checklist.md](references/failure-checklist.md) for the full audience failure checklist.
 
+## Routing Regression Dataset
+
+This version includes a small top-k routing dataset and a deliberately simple evaluator:
+
+```bash
+python3 scripts/eval_router_dataset.py --show-failures
+```
+
+The dataset checks whether the expected primary route appears within the first three retrieved candidates. It is meant to catch stale route triggers and obvious rerank drift, not to replace human review.
+
+The 2026-06-17 evaluation added a regression for a broad high-risk redesign prompt: when a user says a system is terrible, asks to search again, build on another project, personalize it, make it verifiable/iterative, and add scheduled actions, the router should choose an upstream discovery/brainstorming route before implementation, research, or automation.
+
+See [references/router-eval-report-2026-06-17.md](references/router-eval-report-2026-06-17.md) for the test-set construction notes, first-run failures, changes made, and second-run result.
+
 ## What Users See
 
 The router should not just say a skill name. It should show a compact route trace:
@@ -164,9 +178,12 @@ README.md
 README.zh-CN.md
 references/
   failure-checklist.md
+  router-eval-dataset.json
   router-eval-cases.md
+  router-eval-report-2026-06-17.md
   skill-map.md
 scripts/
+  eval_router_dataset.py
   list-installed-skills.sh
 ```
 

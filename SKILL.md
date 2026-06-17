@@ -23,6 +23,7 @@ If the user names a skill:
 
 - If the skill is the requested workflow, use that skill first.
 - If the skill is the target artifact being reviewed, edited, compared, installed, or explained, inspect it as the object of the task instead of activating it as the workflow.
+- If the user names this router while asking to do another task, treat the router as the meta-pass only. Do not select the router itself as the terminal primary route unless the task is router maintenance, router review, route recommendation, eval, install/update/delete/disable sync, or explaining routing itself.
 
 ## Cost And External Side-Effect Gate
 
@@ -53,15 +54,16 @@ If the needed plugin is not callable, do not pretend it was used. Recommend it, 
 ## First Move
 
 1. If the user asks only "which skill/plugin/tool should I use?", run Guided Recommendation Mode.
-2. If the user names this router as the workflow, run the RAG-style routing loop below.
+2. If the user names this router as the workflow, run the RAG-style routing loop below, then choose the downstream route that should actually do the work.
 3. If the user names a skill as the requested workflow, use that skill first. If the skill is the object under review/edit/install/explanation, inspect it as the object.
 4. If the agent installs, updates, modifies, configures, or accepts a skill source in this turn, run the Router Sync Protocol before the final answer. If the task is read-only, report what sync would change instead of editing.
 5. If the user explicitly asks to delete, remove, disable, or stop recommending a skill, verify the exact target and intent before destructive changes. Then update the route map if state changed.
-6. If several skill, plugin, connector, or direct workflow families would materially change the first action, choose 1 primary route and at most 2 secondary routes from `references/skill-map.md`.
-7. If a route uses plugins/connectors/apps/tools, run Plugin And Connector Preflight.
-8. If a route may spend quota or mutate external state, run Cost And External Side-Effect Gate.
-9. After choosing an installed primary skill, open that skill's `SKILL.md` before applying it. The map decides what to open first; it never replaces the primary skill body.
-10. If the task is trivial, answer directly with a short no-skill clause.
+6. If several skill, plugin, connector, or direct workflow families would materially change the first action, choose 1 downstream primary route and at most 2 secondary routes from `references/skill-map.md`.
+7. Before choosing a domain/action route, run the Upstream Discovery Gate below. If it fires, choose a brainstorming/design/intake/requirements route first, with domain/action routes as secondary follow-ons.
+8. If a route uses plugins/connectors/apps/tools, run Plugin And Connector Preflight.
+9. If a route may spend quota or mutate external state, run Cost And External Side-Effect Gate.
+10. After choosing an installed primary skill, open that skill's `SKILL.md` before applying it. The map decides what to open first; it never replaces the primary skill body.
+11. If the task is trivial, answer directly with a short no-skill clause.
 
 Default route line:
 
@@ -82,6 +84,16 @@ Use this loop silently before answering or acting:
 7. Feedback loop: if the route fails, classify why and update eval/map only when write scope allows it.
 
 Only show secondary routes when they change the action, and explain their role or trigger condition. Do not expose the whole skill library.
+
+### Upstream Discovery Gate
+
+Choose an upstream thinking/design route before search, implementation, brokerage, deployment, scheduling, or automation when the request is broad, emotionally negative, multi-system, or high-risk.
+
+Use a brainstorming, project-intake, or requirements-clarifier route as primary when the user asks to rethink, rebuild, redesign, personalize, research alternatives, adapt another project, confirm direction, create an evolvable/verifiable system, or combine current research with implementation/automation. Common cues include "this is terrible", "redo it", "search again", "build on someone else's project", "personalized", "verifiable", "iterative", "evolving system", "core requirement", "direction", "forward-looking", "scheduled purchase", and "create a recurring task".
+
+First action: inspect the smallest relevant context, then ask one clarifying question about purpose, constraints, success criteria, risk boundary, and validation loop. Do not jump straight to solution search, code, live trading, deployment, or scheduling.
+
+Use an implementation route only when the requirement is already clear or the user explicitly says to skip clarification. Use domain/action routes as secondary follow-ons after the design direction is approved.
 
 ## User-Visible Routing Note
 

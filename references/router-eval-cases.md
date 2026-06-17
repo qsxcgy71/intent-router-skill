@@ -1,6 +1,6 @@
 # Intent Router Eval Cases
 
-Last updated: 2026-05-20.
+Last updated: 2026-06-17.
 
 Use these as golden cases after changing `SKILL.md` or `skill-map.md`. They are process tests: the answer should choose the expected primary route, avoid forbidden routes, respect clarification/read-only rules, and name the first observable action.
 
@@ -126,6 +126,21 @@ reason:
   must_do: "make the tiny edit or answer directly"
   first_action: "inspect target sentence"
   reason: "ordinary small task should not trigger router only because work is non-trivial"
+
+- id: core-007
+  query: "Use intent-router. The current automation system is terrible; search again, build on another project, and redesign it into a personalized, verifiable, iterative system with scheduled actions."
+  expected_primary: "upstream discovery / brainstorming route"
+  expected_secondary: ["domain research route", "automation/reminder route"]
+  expected_candidates: ["intent-router", "upstream discovery / brainstorming route", "domain research route", "automation/reminder route", "incremental implementation route"]
+  should_clarify: true
+  conditional_clarification: "ask one design clarification after inspecting the smallest relevant context"
+  must_not_select: ["intent-router as terminal primary", "incremental implementation route as primary", "automation/reminder route as primary before design approval"]
+  must_do: "treat the router as a meta-pass and choose upstream discovery before search, implementation, or scheduling"
+  first_action: "inspect smallest relevant context, then ask one design clarification question"
+  approval_required: true
+  external_side_effect: "possible future scheduled automation or external action"
+  failure_type: "rerank_miss"
+  reason: "broad high-risk redesign needs upstream discovery; router itself should not win merely because it was named"
 ```
 
 ## Debugging, Building, And Review

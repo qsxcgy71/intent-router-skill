@@ -1,0 +1,198 @@
+{
+  "version": 1,
+  "description": "Broad intent-router top-k dataset. expected_primary should appear within top 3; support routes are useful follow-on routes but are not required for hit@3.",
+  "cases": [
+    {
+      "id": "upstream-redesign-automation-001",
+      "query": "Use intent-router. The current automation system is terrible; search again, build on another project, and redesign it into a personalized, verifiable, iterative system with scheduled actions.",
+      "expected_primary": "upstream discovery / brainstorming route",
+      "expected_support": ["docs/official-source route", "automation/reminder route", "incremental implementation"],
+      "must_not_top1": ["intent-router", "automation/reminder route", "incremental implementation"],
+      "rationale": "A broad, emotionally negative, multi-system redesign needs design discovery before research, implementation, or scheduling."
+    },
+    {
+      "id": "upstream-product-direction-001",
+      "query": "I have a rough product idea. Brainstorm with me first and clarify the core requirement and direction before implementation.",
+      "expected_primary": "upstream discovery / brainstorming route",
+      "expected_support": ["requirements clarifier", "project intake"],
+      "must_not_top1": ["incremental implementation"],
+      "rationale": "Explicit brainstorming and direction-setting should lead with upstream discovery."
+    },
+    {
+      "id": "repo-fuzzy-change-001",
+      "query": "This existing repo needs a feature, but I cannot describe it clearly yet. Help me shape this change.",
+      "expected_primary": "requirements clarifier",
+      "expected_support": ["incremental implementation"],
+      "must_not_top1": ["project intake"],
+      "rationale": "Existing repo plus fuzzy but bounded change calls for a funnel question, not full intake."
+    },
+    {
+      "id": "new-project-intake-001",
+      "query": "I want to build a new app from scratch and only have a rough direction.",
+      "expected_primary": "project intake",
+      "expected_support": ["upstream discovery / brainstorming route"],
+      "must_not_top1": ["incremental implementation"],
+      "rationale": "Starting a new product from scratch should route to intake before implementation."
+    },
+    {
+      "id": "frontend-polish-001",
+      "query": "This page looks cheap. Make it feel polished and ready to ship.",
+      "expected_primary": "frontend design",
+      "expected_support": ["UI engineering", "browser tool route"],
+      "must_not_top1": ["UI engineering"],
+      "rationale": "Visual quality and shipping feel are design-led."
+    },
+    {
+      "id": "ui-state-001",
+      "query": "The component state toggle and responsive layout are broken on mobile.",
+      "expected_primary": "UI engineering",
+      "expected_support": ["browser tool route", "scripted browser tests"],
+      "must_not_top1": ["frontend design"],
+      "rationale": "State/responsive behavior is UI engineering first."
+    },
+    {
+      "id": "browser-localhost-001",
+      "query": "Open localhost and click the login button, then screenshot the result.",
+      "expected_primary": "browser tool route",
+      "expected_support": ["scripted browser tests"],
+      "must_not_top1": ["frontend design"],
+      "rationale": "Open/click/screenshot is a browser tool route."
+    },
+    {
+      "id": "hard-debug-001",
+      "query": "Production returns 500 sometimes. Do not guess. Find the root cause.",
+      "expected_primary": "systematic debugging",
+      "expected_support": ["error recovery"],
+      "must_not_top1": ["incremental implementation"],
+      "rationale": "Hard intermittent production bug needs reproduction or logs before fixing."
+    },
+    {
+      "id": "test-failure-001",
+      "query": "Tests fail with this error. Help me fix the command failure.",
+      "expected_primary": "error recovery",
+      "expected_support": ["systematic debugging", "test-driven implementation"],
+      "must_not_top1": ["project intake"],
+      "rationale": "Straight command/test failure should inspect the exact error and smallest repro."
+    },
+    {
+      "id": "clear-feature-001",
+      "query": "The behavior is clear. Implement this feature in thin slices and add tests.",
+      "expected_primary": "incremental implementation",
+      "expected_support": ["test-driven implementation"],
+      "must_not_top1": ["requirements clarifier"],
+      "rationale": "Clear implementation should proceed in slices with tests."
+    },
+    {
+      "id": "code-review-001",
+      "query": "Review this diff for bugs, regressions, and missing tests. Findings first.",
+      "expected_primary": "code review",
+      "expected_support": [],
+      "must_not_top1": ["incremental implementation"],
+      "rationale": "Review stance should inspect the diff and lead with findings."
+    },
+    {
+      "id": "official-docs-001",
+      "query": "What is the latest API behavior? Use official docs, not memory.",
+      "expected_primary": "docs/official-source route",
+      "expected_support": [],
+      "must_not_top1": ["memory-only answer"],
+      "rationale": "Current API facts require official/current sources."
+    },
+    {
+      "id": "plugin-recommend-001",
+      "query": "Which plugin should I use to search my cloud documents? Recommend only.",
+      "expected_primary": "plugin recommendation route",
+      "expected_support": ["plugin/connector preflight"],
+      "must_not_top1": ["executing/installing plugin"],
+      "rationale": "Recommendation intent is not install or execution intent."
+    },
+    {
+      "id": "missing-plugin-001",
+      "query": "Use the Slack connector to find the latest team decision.",
+      "expected_primary": "missing plugin boundary",
+      "expected_support": ["plugin recommendation route"],
+      "must_not_top1": ["pretending to use plugin"],
+      "rationale": "A connector route must check callability before claiming it used the connector."
+    },
+    {
+      "id": "paid-api-001",
+      "query": "Run the OpenAI API to generate embeddings for this folder.",
+      "expected_primary": "docs/official-source route",
+      "expected_support": ["cost gate"],
+      "must_not_top1": ["direct paid API call"],
+      "rationale": "Paid API usage needs current docs and a quota/cost approval gate."
+    },
+    {
+      "id": "deployment-001",
+      "query": "Deploy this app to production and give me the public URL.",
+      "expected_primary": "deployment route",
+      "expected_support": ["git workflow route"],
+      "must_not_top1": ["local build-only route"],
+      "rationale": "Deployment mutates external state and needs target/environment confirmation."
+    },
+    {
+      "id": "docx-001",
+      "query": "Turn this report into an editable Word docx.",
+      "expected_primary": "Word document route",
+      "expected_support": [],
+      "must_not_top1": ["PDF/polished deliverable route"],
+      "rationale": "Editable Word output should not route to a PDF-only workflow."
+    },
+    {
+      "id": "pptx-001",
+      "query": "Make an editable PowerPoint PPTX deck, not just a PDF.",
+      "expected_primary": "presentation route",
+      "expected_support": [],
+      "must_not_top1": ["PDF/polished deliverable route"],
+      "rationale": "Editable deck output should route to presentation/PPTX tooling."
+    },
+    {
+      "id": "pdf-001",
+      "query": "Make a polished one-page PDF portfolio.",
+      "expected_primary": "PDF/polished deliverable route",
+      "expected_support": [],
+      "must_not_top1": ["presentation route"],
+      "rationale": "Polished PDF/one-pager output is the PDF deliverable route."
+    },
+    {
+      "id": "knowledge-base-001",
+      "query": "Search my local wiki and explain what the notes say about agent memory.",
+      "expected_primary": "knowledge base route",
+      "expected_support": [],
+      "must_not_top1": ["web search"],
+      "rationale": "Local knowledge-base source should not be replaced by generic web search."
+    },
+    {
+      "id": "automation-001",
+      "query": "Remind me every weekday at 9am to review the trading plan.",
+      "expected_primary": "automation/reminder route",
+      "expected_support": [],
+      "must_not_top1": ["calendar route"],
+      "rationale": "Recurring future follow-up needs exact scheduling and timezone handling."
+    },
+    {
+      "id": "git-publish-001",
+      "query": "Commit these changes, push them, and open a PR.",
+      "expected_primary": "git workflow route",
+      "expected_support": [],
+      "must_not_top1": ["broad cleanup route"],
+      "rationale": "Publishing changes requires dirty-state and remote/branch preflight."
+    },
+    {
+      "id": "skill-update-001",
+      "query": "Update this skill and add eval cases for the new routing behavior.",
+      "expected_primary": "skill install/update route",
+      "expected_support": ["git workflow route"],
+      "must_not_top1": ["direct edit without tests"],
+      "rationale": "Skill updates should include route-map sync and eval coverage."
+    },
+    {
+      "id": "spreadsheet-001",
+      "query": "Analyze this CSV and create an xlsx tracker with formulas and charts.",
+      "expected_primary": "spreadsheet route",
+      "expected_support": [],
+      "must_not_top1": ["document route"],
+      "rationale": "Tabular analysis and workbook output should route to spreadsheet tooling."
+    }
+  ]
+}

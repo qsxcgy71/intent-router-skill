@@ -1,6 +1,6 @@
 # Intent Router Skill Map
 
-Last synced: 2026-05-20.
+Last synced: 2026-06-17.
 
 This file is the router's working map. Keep it concise and decision-oriented. It does not replace each selected skill's `SKILL.md`; it only explains which route to open or use first.
 
@@ -92,6 +92,7 @@ These examples are intentionally generic. Replace names and caveats with the ski
 |---|---|---|---|---|---|
 | requirements clarifier | "I know the repo but the feature is fuzzy", "help me shape this change" | Ask one funnel question or inspect nearby files | project intake for brand-new products | Wrong first action would edit files | Do not over-interview. |
 | project intake | "I want to build a new app/tool/site from scratch" | Ask the first product/context question | requirements clarifier for existing scoped changes | Audience, output, platform unclear | Good for new projects. |
+| upstream discovery / brainstorming route | "this system is terrible, redo it", "search again and build on another project", "personalized/verifiable/iterative/evolving system", "clarify the core requirement and direction", "forward-looking automation or scheduled action" | Inspect the smallest relevant context, then ask one design clarification question | implementation, domain research, deployment, brokerage, or automation routes before direction is approved | User explicitly says to skip discovery and gives an exact implementation contract | Use before high-risk multi-system work. Domain/action routes become secondary follow-ons. |
 | systematic debugging | "do not guess", "production 500", "intermittent bug" | Reproduce or inspect logs before fixing | generic implementation | Target service/log path unknown | Use for hard or unclear bugs. |
 | error recovery | "tests fail", "build failed", "this command errors" | Read exact error and run smallest repro | systematic debugging for intermittent bugs | Repro command or write scope unknown | Broad recovery route. |
 | test-driven implementation | "red-green-refactor", "serious behavior change" | Write failing behavior test first | generic implementation | No behavior surface known | Use when tests can define the change. |
@@ -101,14 +102,14 @@ These examples are intentionally generic. Replace names and caveats with the ski
 | UI engineering | "responsive/state/accessibility issue", "component behavior" | Inspect components and UI state | frontend design for visual taste | Visual vs behavioral issue unclear | Pair with browser verification. |
 | browser tool route | "open localhost", "click this", "screenshot the page" | Use the in-app browser or browser automation tool | scripted tests when repeatability matters | URL/port missing | Prefer interactive browser for explicit click/open requests. |
 | scripted browser tests | "write an e2e test", "repeat this browser flow" | Inspect test setup and script flow | interactive browser route | App start command unclear | Use when repeatability matters. |
-| docs/official-source route | "latest docs", "current pricing/model/API" | Browse official/current sources | memory-only answer | Product/context ambiguous | Separate official facts from inference. |
+| docs/official-source route | "latest docs", "current pricing/model/API", "OpenAI API", "embeddings", "paid/metered API" | Browse official/current sources and apply cost/approval gate before paid calls | memory-only answer or direct paid API call | Product/context ambiguous | Separate official facts from inference. |
 | Word document route | "make a docx", "Word file", "report I can submit" | Draft/edit/export `.docx` | polished PDF route | Identity/rubric/source missing | Use document tooling, not only chat summary. |
 | presentation route | "make slides", "PPT/PPTX", "editable deck" | Create/edit `.pptx` and verify render | polished PDF route | Audience/slide count/storyline missing | Editable deck beats PDF polish. |
 | PDF/polished deliverable route | "polished PDF", "one-pager", "portfolio" | Build visual deliverable and render-check | docx/pptx when editable Office file is explicit | Final format ambiguous | Not primary for editable Office files. |
 | spreadsheet route | "xlsx", "spreadsheet", "formulas/charts" | Inspect tabular data and workbook target | document route | Source/columns unclear | Use workbook tools. |
 | knowledge base route | "search my wiki/notes", "explain this note" | Verify target knowledge base/path, then query/summarize | web search if local source is required | Which vault/wiki/source is unclear | Path accuracy matters. |
 | automation/reminder route | "remind me", "check every week", "follow up later" | Confirm exact date/time/timezone/recurrence, then create automation | calendar route when the user asks for calendar event | Ambiguous time/zone | Future actions need exact scheduling. |
-| deployment route | "deploy", "publish", "share publicly" | Confirm target/env/public-vs-private if unclear, then use deploy tool | local build-only route | Production/public/cost ambiguity | External side-effect gate required. |
+| deployment route | "deploy", "publish", "production", "public URL", "share publicly" | Confirm target/env/public-vs-private if unclear, then use deploy tool | local build-only route or browser-only route | Production/public/cost ambiguity | External side-effect gate required. |
 | git workflow route | "commit", "push", "open PR", "sync GitHub" | Inspect dirty state and remote, stage exact paths | broad cleanup route | Dirty tree or target branch unclear | Never stage unrelated files. |
 | skill install/update route | "install this skill", "update this skill", "is this a skill?" | Inspect `SKILL.md`/README/source shape, install/update/hold, then sync map | generic git clone only | Source/path/secret unclear | Do not assume every repo is a skill. |
 | plugin recommendation route | "which plugin should I use?", "is there a connector for this?" | Recommend one primary plugin/tool and up to two backups | executing/installing plugin | Target platform/account unclear | Recommendation is not install intent. |
@@ -119,6 +120,8 @@ These examples are intentionally generic. Replace names and caveats with the ski
 | Ambiguity | Choose | Rule |
 |---|---|---|
 | Recommendation vs execution | Based on verb | "Which should I use?" recommends. "Do this" routes and executes. |
+| Router named as meta-route | Downstream primary, not the router itself | If the user says "use intent-router" and also gives a real task, keep the router as the meta-pass but choose the task route as primary. Choose the router itself only for router maintenance, route recommendation, evals, install/update/delete/disable sync, or explaining routing. |
+| Broad unclear redesign / high-risk automation | upstream discovery / brainstorming route | If cues include "redo", "search again", "build on another project", "personalized", "verifiable", "iterative", "evolving", "core requirement", "direction", "forward-looking", or scheduled external action, clarify design and success criteria before search, implementation, deployment, brokerage, or automation. |
 | Existing fuzzy repo change vs new product | requirements clarifier vs project intake | Existing repo/change gets one funnel question; starting from scratch gets intake. |
 | Editable Office vs polished PDF | Office route first | If `.docx`, `.pptx`, Word, or PowerPoint is explicit, do not route to a PDF-only workflow first. |
 | Current facts vs memory | current/source route | For products, docs, pricing, law, schedules, finance, and recommendations, verify current sources. |

@@ -45,6 +45,20 @@ flowchart LR
 
 完整失败清单见：[references/failure-checklist.md](references/failure-checklist.md)。
 
+## 路由回归测试集
+
+这个版本加入了一个小型 top-k 路由测试集，以及一个故意很朴素的评估脚本：
+
+```bash
+python3 scripts/eval_router_dataset.py --show-failures
+```
+
+测试目标是：期望的主路线应该出现在前 3 个候选里。它不是完整语义评测，而是用来捕捉 route trigger 变旧、候选噪声过大、重排明显跑偏等问题。
+
+2026-06-17 的评估新增了一个关键回归：当用户说某个系统很差、要求重新搜索、基于别人项目重做、个性化、可验证、可迭代，并且还涉及定时动作时，router 应该先选择 upstream discovery / brainstorming route，而不是直接进入实现、研究或自动化。
+
+测试集构建思路、第一轮暴露的问题、修改过程和第二轮结果见：[references/router-eval-report-2026-06-17.md](references/router-eval-report-2026-06-17.md)。
+
 ## 用户会看到什么？
 
 它不应该只输出一个 skill 名字，而应该输出一段短短的路由轨迹：
