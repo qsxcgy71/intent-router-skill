@@ -153,3 +153,32 @@ Run it with:
 ```bash
 python3 scripts/eval_router_dataset.py --show-failures
 ```
+
+## Public Package Validation
+
+When the generalized public package was first tested, it still exposed smaller routing-table and evaluator issues:
+
+```text
+cases=24 top1=11/24 hit@3=19/24 (79.2%)
+```
+
+The misses were useful:
+
+- `missing-plugin-001` was pulled toward locally installed skill names instead of the repository route table.
+- `paid-api-001` was pulled toward browser/error/plugin routes because generic words such as "run", "the", "this", and "for" were counted as routing signal.
+- `deployment-001` was pulled toward browser/test/plugin routes because "production" and "public URL" were not explicit deployment triggers.
+- `pdf-001` and `spreadsheet-001` were pulled toward installed local skill names instead of the public route cards.
+
+The public-package fixes were:
+
+1. Make `scripts/eval_router_dataset.py` score only the repository `skill-map.md` by default.
+2. Add `--include-installed-skills` for machine-specific smoke tests.
+3. Filter common English stopwords from the lexical scorer.
+4. Add explicit route triggers for paid/metered API usage, embeddings, production deploys, and public URLs.
+
+Final public-package run:
+
+```text
+cases=24 top1=19/24 hit@3=24/24 (100.0%)
+failures: none
+```
