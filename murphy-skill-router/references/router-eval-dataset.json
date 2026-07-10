@@ -1,0 +1,599 @@
+{
+  "version": 1,
+  "description": "Broad Murphy router top-k dataset. expected_primary should appear within top 3; support routes are useful follow-on routes but not required for hit@3.",
+  "cases": [
+    {
+      "id": "upstream-quant-redesign-001",
+      "query": "现在的自动化量化系统做的非常垃圾，重新搜索并在别人的项目基础上完善成适合我的个性化的可验证可迭代进化的量化系统，要求低频交易每天交易次数限制在几次，并且有前瞻性，比如前几天 SpaceX 上市大涨，需要有前瞻性的预定时间（或者创建定时任务）购入",
+      "expected_primary": "superpowers:brainstorming",
+      "expected_support": [
+        "Public Equity Investing plugin route",
+        "futuapi",
+        "Automations route"
+      ],
+      "must_not_top1": [
+        "murphy-skill-router",
+        "futuapi",
+        "spec-driven-development"
+      ],
+      "rationale": "Large fuzzy redesign plus high-stakes trading automation needs design discovery before solution search or brokerage/automation actions.",
+      "inspection_notes": "Checked brainstorming for clarify/design gate; public-equity-investing for current source-backed research; futuapi for simulated brokerage actions; Automations only after approved schedule semantics."
+    },
+    {
+      "id": "upstream-product-design-001",
+      "query": "我有个产品想法但很模糊，先跟我一起头脑风暴，把核心需求和修改方向确认清楚，再考虑实现。",
+      "expected_primary": "superpowers:brainstorming",
+      "expected_support": [
+        "quick-requirement-clarifier",
+        "project-intake-interview"
+      ],
+      "must_not_top1": [
+        "incremental-implementation"
+      ],
+      "rationale": "Explicit brainstorming and core-requirement discovery should lead with Superpowers design gate.",
+      "inspection_notes": "Checked brainstorming for one-question exploration and approval gate; quick clarifier is backup for smaller existing changes."
+    },
+    {
+      "id": "repo-fuzzy-change-001",
+      "query": "这个 repo 有个功能想加，但我说不清楚，你自己先帮我理一下需求。",
+      "expected_primary": "quick-requirement-clarifier",
+      "expected_support": [
+        "spec-driven-development",
+        "incremental-implementation"
+      ],
+      "must_not_top1": [
+        "project-intake-interview"
+      ],
+      "rationale": "Existing repo plus fuzzy but bounded change calls for one funnel question, not full product intake.",
+      "inspection_notes": "Checked quick-requirement-clarifier map row against project-intake distinction."
+    },
+    {
+      "id": "new-project-intake-001",
+      "query": "从零做一个新的 AI 工具，我只有大概方向，先帮我做项目入口访谈。",
+      "expected_primary": "project-intake-interview",
+      "expected_support": [
+        "superpowers:brainstorming",
+        "idea-refine"
+      ],
+      "must_not_top1": [
+        "incremental-implementation"
+      ],
+      "rationale": "Starting from scratch and asking intake should choose project intake before implementation.",
+      "inspection_notes": "Checked project-intake trigger for new products and brainstorming as collaborative design backup."
+    },
+    {
+      "id": "frontend-polish-001",
+      "query": "这个页面看起来很廉价，不像能上线的产品，帮我重新设计一下。",
+      "expected_primary": "frontend-design",
+      "expected_support": [
+        "browser-testing-with-devtools",
+        "frontend-ui-engineering"
+      ],
+      "must_not_top1": [
+        "frontend-ui-engineering"
+      ],
+      "rationale": "Visual quality and launch feel are design-led.",
+      "inspection_notes": "Checked frontend-design route for visual polish; UI engineering only for behavior/state."
+    },
+    {
+      "id": "frontend-state-001",
+      "query": "这个组件的响应式和状态切换有问题，移动端布局也乱了，帮我修。",
+      "expected_primary": "frontend-ui-engineering",
+      "expected_support": [
+        "browser-testing-with-devtools",
+        "frontend-design"
+      ],
+      "must_not_top1": [
+        "kami"
+      ],
+      "rationale": "Component behavior, state, and responsive bugs are UI engineering first.",
+      "inspection_notes": "Checked frontend-ui-engineering route and browser-testing live verification."
+    },
+    {
+      "id": "browser-localhost-001",
+      "query": "打开 localhost 页面，帮我点一下按钮并截图看看控制台有没有报错。",
+      "expected_primary": "Browser / Chrome plugin route",
+      "expected_support": [
+        "browser-testing-with-devtools",
+        "playwright"
+      ],
+      "must_not_top1": [
+        "frontend-design"
+      ],
+      "rationale": "Open/click/screenshot/console is browser tool routing.",
+      "inspection_notes": "Checked Browser/Chrome route and playwright backup for scripted checks."
+    },
+    {
+      "id": "open-design-001",
+      "query": "打开 Open Design 画布，读取当前设计稿，然后帮我改这个产品原型。",
+      "expected_primary": "open-design-assistant",
+      "expected_support": [
+        "frontend-design",
+        "Browser / Chrome plugin route"
+      ],
+      "must_not_top1": [
+        "Browser / Chrome plugin route"
+      ],
+      "rationale": "Open Design canvas is a local-canvas bridge, not plain browser inspection.",
+      "inspection_notes": "Checked open-design-assistant route for localhost/.od shared artifact workflow."
+    },
+    {
+      "id": "debug-hard-001",
+      "query": "这个接口线上 500，不要猜，先定位根因。",
+      "expected_primary": "diagnose",
+      "expected_support": [
+        "debugging-and-error-recovery"
+      ],
+      "must_not_top1": [
+        "superpowers:systematic-debugging"
+      ],
+      "rationale": "Hard non-obvious production bug with no-guess cue.",
+      "inspection_notes": "Checked diagnose for reproduce-hypothesis-instrument loop; broad recovery is backup."
+    },
+    {
+      "id": "debug-test-fail-001",
+      "query": "npm test 挂了，报错如下，帮我修。",
+      "expected_primary": "debugging-and-error-recovery",
+      "expected_support": [
+        "diagnose",
+        "test-driven-development"
+      ],
+      "must_not_top1": [
+        "project-intake-interview"
+      ],
+      "rationale": "Straight build/test failure should inspect exact error and smallest repro.",
+      "inspection_notes": "Checked debugging-and-error-recovery for test/build errors; diagnose only if hard/intermittent."
+    },
+    {
+      "id": "engineering-clear-feature-001",
+      "query": "这个功能需求已经明确了，按薄切片实现并加测试。",
+      "expected_primary": "incremental-implementation",
+      "expected_support": [
+        "test-driven-development",
+        "spec-driven-development"
+      ],
+      "must_not_top1": [
+        "project-intake-interview"
+      ],
+      "rationale": "Clear implementation work should execute in slices with tests.",
+      "inspection_notes": "Checked incremental implementation and TDD rows; spec is backup if requirements become unclear."
+    },
+    {
+      "id": "code-review-001",
+      "query": "帮我 review 这次改动，只看 bug、回归风险和缺少的测试。",
+      "expected_primary": "code-review-and-quality",
+      "expected_support": [
+        "superpowers:requesting-code-review"
+      ],
+      "must_not_top1": [
+        "incremental-implementation"
+      ],
+      "rationale": "Review stance should lead with findings and not edit.",
+      "inspection_notes": "Checked code-review-and-quality for completed diff review; Superpowers review is optional completion checkpoint."
+    },
+    {
+      "id": "openai-docs-001",
+      "query": "OpenAI Agents SDK 最新怎么用？看官方文档，不要凭记忆。",
+      "expected_primary": "openai-developers:agents-sdk",
+      "expected_support": [
+        "openai-docs"
+      ],
+      "must_not_top1": [
+        "memory answer"
+      ],
+      "rationale": "Current OpenAI SDK usage requires official docs and specific Agents SDK route.",
+      "inspection_notes": "Checked OpenAI docs and Agents SDK route; current-fact rule requires official verification."
+    },
+    {
+      "id": "openai-key-001",
+      "query": "帮我配置 OPENAI_API_KEY，不要让我在聊天里贴 sk-proj。",
+      "expected_primary": "openai-developers:openai-platform-api-key",
+      "expected_support": [
+        "openai-docs"
+      ],
+      "must_not_top1": [
+        "manual pasted-key instructions"
+      ],
+      "rationale": "API key setup needs secure OpenAI Platform flow.",
+      "inspection_notes": "Checked openai-platform-api-key row and secret-handling caveat."
+    },
+    {
+      "id": "gmail-connector-001",
+      "query": "查一下 Gmail 过去一天有没有重要邮件，垃圾箱和 spam 不算。",
+      "expected_primary": "App connector routes",
+      "expected_support": [
+        "gmail:gmail-inbox-triage"
+      ],
+      "must_not_top1": [
+        "web search"
+      ],
+      "rationale": "Mail lookup requires the Gmail connector route if callable.",
+      "inspection_notes": "Checked App connector route and Gmail skill availability."
+    },
+    {
+      "id": "drive-connector-001",
+      "query": "去 Google Drive 找一下我的 rubric 文档。",
+      "expected_primary": "Google Drive connector route",
+      "expected_support": [
+        "google-drive:google-drive",
+        "google-drive:google-docs"
+      ],
+      "must_not_top1": [
+        "local filesystem search"
+      ],
+      "rationale": "Drive source should not be replaced by local/web search.",
+      "inspection_notes": "Checked Google Drive connector route and read/write target caveat."
+    },
+    {
+      "id": "notion-read-001",
+      "query": "查 Notion 里那个项目 spec 的最新内容，先不要写计划。",
+      "expected_primary": "notion:notion-research-documentation",
+      "expected_support": [
+        "notion:notion-knowledge-capture"
+      ],
+      "must_not_top1": [
+        "notion:notion-spec-to-implementation"
+      ],
+      "rationale": "Read-only Notion query differs from spec-to-implementation.",
+      "inspection_notes": "Checked Notion research route and read-only anti-cue."
+    },
+    {
+      "id": "vercel-deploy-001",
+      "query": "把这个站点 deploy 到 Vercel，给我线上链接。",
+      "expected_primary": "Vercel plugin route",
+      "expected_support": [
+        "vercel-deploy",
+        "shipping-and-launch"
+      ],
+      "must_not_top1": [
+        "local build only"
+      ],
+      "rationale": "External deployment should use Vercel route with target/side-effect gate.",
+      "inspection_notes": "Checked Vercel plugin route, vercel-deploy backup, and external approval gate."
+    },
+    {
+      "id": "automation-reminder-001",
+      "query": "每天早上九点提醒我检查交易计划。",
+      "expected_primary": "Automations route",
+      "expected_support": [
+        "futuapi"
+      ],
+      "must_not_top1": [
+        "local calendar"
+      ],
+      "rationale": "Recurring reminder maps to automation tool with timezone preflight.",
+      "inspection_notes": "Checked Automations route and external side-effect/write caveat."
+    },
+    {
+      "id": "docx-001",
+      "query": "把这份报告改成能交的 Word 版 .docx，保留格式。",
+      "expected_primary": "docx / doc",
+      "expected_support": [
+        "assignment-support-coach"
+      ],
+      "must_not_top1": [
+        "kami"
+      ],
+      "rationale": "Editable Word is docx route, not polished PDF.",
+      "inspection_notes": "Checked docx/doc row and Kami anti-cue."
+    },
+    {
+      "id": "pptx-001",
+      "query": "做一份可编辑 PPTX，不要只给 PDF。",
+      "expected_primary": "pptx / pptx-skill",
+      "expected_support": [
+        "Presentations plugin route"
+      ],
+      "must_not_top1": [
+        "kami"
+      ],
+      "rationale": "Editable PowerPoint must route to PPTX tooling.",
+      "inspection_notes": "Checked pptx route and Presentations plugin backup."
+    },
+    {
+      "id": "kami-polished-001",
+      "query": "做一个好看的 PDF 一页纸作品集，视觉要高级。",
+      "expected_primary": "kami",
+      "expected_support": [
+        "docx / doc"
+      ],
+      "must_not_top1": [
+        "pptx / pptx-skill"
+      ],
+      "rationale": "Polished visual PDF deliverable is Kami route unless editable Office is explicit.",
+      "inspection_notes": "Checked Kami route and Office-format anti-cues."
+    },
+    {
+      "id": "obsidian-note-001",
+      "query": "把这个总结写成 Obsidian 笔记，加 properties、双链和 callout。",
+      "expected_primary": "obsidian-markdown",
+      "expected_support": [
+        "obsidian-bases"
+      ],
+      "must_not_top1": [
+        "wiki-ingest"
+      ],
+      "rationale": "Obsidian markdown formatting is file-format skill.",
+      "inspection_notes": "Checked obsidian-markdown row; WiKi only for WiKi repo."
+    },
+    {
+      "id": "wiki-query-001",
+      "query": "根据本地 WiKi 回答，wiki 里怎么说 agent memory？",
+      "expected_primary": "wiki-query / wiki-explain-page",
+      "expected_support": [
+        "stepwise-agent-tutoring"
+      ],
+      "must_not_top1": [
+        "obsidian-markdown"
+      ],
+      "rationale": "Local WiKi query should stay in WiKi repo, not Obsidian.",
+      "inspection_notes": "Checked wiki-query/explain route and WiKi vs Obsidian distinction."
+    },
+    {
+      "id": "wiki-ingest-001",
+      "query": "把这篇论文导入 WiKi，更新知识库并检查链接。",
+      "expected_primary": "wiki-ingest / wiki-lint",
+      "expected_support": [
+        "paper-analyze"
+      ],
+      "must_not_top1": [
+        "obsidian-markdown"
+      ],
+      "rationale": "Ingest/update/link-check are WiKi ingest/lint tasks.",
+      "inspection_notes": "Checked wiki-ingest/lint row and immutable raw caveat."
+    },
+    {
+      "id": "start-my-day-001",
+      "query": "start my day，帮我生成今天的 arXiv 论文推荐到 Obsidian。",
+      "expected_primary": "start-my-day",
+      "expected_support": [
+        "paper-analyze",
+        "extract-paper-images"
+      ],
+      "must_not_top1": [
+        "aihot"
+      ],
+      "rationale": "Daily arXiv recommendation into Obsidian is start-my-day, not news.",
+      "inspection_notes": "Checked start-my-day route and Obsidian/config/network dependencies."
+    },
+    {
+      "id": "aihot-001",
+      "query": "今天 AI 圈有什么热点？给我中文 AI 日报。",
+      "expected_primary": "aihot",
+      "expected_support": [
+        "start-my-day"
+      ],
+      "must_not_top1": [
+        "memory answer"
+      ],
+      "rationale": "Current AI news should call AI HOT source, not memory.",
+      "inspection_notes": "Checked aihot description and current-news anti-memory rule."
+    },
+    {
+      "id": "paper-analyze-001",
+      "query": "读一下 arXiv:2402.12345，生成图文论文笔记。",
+      "expected_primary": "paper-analyze",
+      "expected_support": [
+        "extract-paper-images"
+      ],
+      "must_not_top1": [
+        "wiki-explain-page"
+      ],
+      "rationale": "Paper note with images belongs to paper-analyze.",
+      "inspection_notes": "Checked paper-analyze and image extraction backup."
+    },
+    {
+      "id": "conf-papers-001",
+      "query": "搜 2025 ICLR 里 agent 方向有什么值得读的论文。",
+      "expected_primary": "conf-papers",
+      "expected_support": [
+        "paper-analyze"
+      ],
+      "must_not_top1": [
+        "start-my-day"
+      ],
+      "rationale": "Conference/year-specific search should use conf-papers.",
+      "inspection_notes": "Checked conf-papers row and start-my-day distinction."
+    },
+    {
+      "id": "agent-learning-001",
+      "query": "继续昨天 hello-agent 的 Agentic RAG 学习，第 0 步开始，不要写代码，先检查我理解。",
+      "expected_primary": "stepwise-agent-tutoring",
+      "expected_support": [
+        "obsidian-markdown"
+      ],
+      "must_not_top1": [
+        "incremental-implementation"
+      ],
+      "rationale": "Learning mode plus hello-agent/RAG should use stepwise tutoring.",
+      "inspection_notes": "Checked stepwise-agent-tutoring memory-backed route and learning-mode gate."
+    },
+    {
+      "id": "hermes-audit-001",
+      "query": "Hermes 现在 PAUSE 卡住了吗？只读审计控制面，不要改。",
+      "expected_primary": "hermes-control-gate-audit",
+      "expected_support": [
+        "direct read-only route"
+      ],
+      "must_not_top1": [
+        "execute_action"
+      ],
+      "rationale": "Hermes PAUSE/control-plane status is read-only audit.",
+      "inspection_notes": "Checked Hermes audit route and no-mutation boundary."
+    },
+    {
+      "id": "skill-authoring-001",
+      "query": "帮我改这个 skill，让它更可靠，并加 eval case 验证。",
+      "expected_primary": "superpowers:writing-skills",
+      "expected_support": [
+        "write-a-skill",
+        "murphy-skill-router"
+      ],
+      "must_not_top1": [
+        "direct edit without tests"
+      ],
+      "rationale": "Editing a skill with evals should use skill-writing discipline.",
+      "inspection_notes": "Checked writing-skills for RED/GREEN/REFACTOR process; router applies when route surface changes."
+    },
+    {
+      "id": "plugin-superpowers-001",
+      "query": "为什么我不能下载 superpower 这个插件？修复一下。",
+      "expected_primary": "Superpowers plugin install/check route",
+      "expected_support": [
+        "murphy-skill-router",
+        "plugin/connector route"
+      ],
+      "must_not_top1": [
+        "add superpower@openai-curated config alias"
+      ],
+      "rationale": "Singular natural language alias should map to canonical superpowers plugin.",
+      "inspection_notes": "Checked plugin metadata and router map alias row."
+    },
+    {
+      "id": "futu-account-001",
+      "query": "用 Futu API 查一下持仓和订单，默认模拟盘，不要真下单。",
+      "expected_primary": "futuapi",
+      "expected_support": [
+        "install-futu-opend"
+      ],
+      "must_not_top1": [
+        "Public Equity Investing plugin route"
+      ],
+      "rationale": "Brokerage/account/API operation is futuapi, not research plugin.",
+      "inspection_notes": "Checked futuapi row and SIMULATE/live-order safety boundary."
+    },
+    {
+      "id": "public-equity-001",
+      "query": "帮我研究一下 NVDA 股票，查最新财报、估值和催化剂，不要直接下单。",
+      "expected_primary": "Public Equity Investing plugin route",
+      "expected_support": [
+        "futuapi"
+      ],
+      "must_not_top1": [
+        "futuapi"
+      ],
+      "rationale": "Source-backed stock research differs from brokerage/account actions.",
+      "inspection_notes": "Checked Public Equity route and futuapi overlap note."
+    },
+    {
+      "id": "investment-banking-001",
+      "query": "从投行视角做一个并购可比公司和 DCF 估值框架。",
+      "expected_primary": "Investment Banking plugin route",
+      "expected_support": [
+        "Public Equity Investing plugin route"
+      ],
+      "must_not_top1": [
+        "futuapi"
+      ],
+      "rationale": "Transaction/valuation/pitch workflow is investment banking route.",
+      "inspection_notes": "Checked Investment Banking route vs public equity research."
+    },
+    {
+      "id": "data-dashboard-001",
+      "query": "分析我的交易记录 CSV，做收益回撤 dashboard 和可编辑跟踪表。",
+      "expected_primary": "Data Analytics / Spreadsheets plugin route",
+      "expected_support": [
+        "xlsx"
+      ],
+      "must_not_top1": [
+        "Public Equity Investing plugin route"
+      ],
+      "rationale": "Portfolio data analysis/dashboard/table output should use data analytics/spreadsheets.",
+      "inspection_notes": "Checked Data Analytics/Spreadsheets route and xlsx backup."
+    },
+    {
+      "id": "image-generation-001",
+      "query": "帮我生成一张文章配图，要求科技感但不要太商业海报。",
+      "expected_primary": "baoyu-image-gen",
+      "expected_support": [
+        "baoyu-article-illustrator",
+        "imagegen"
+      ],
+      "must_not_top1": [
+        "frontend-design"
+      ],
+      "rationale": "Image generation request should use image-generation skill/tooling.",
+      "inspection_notes": "Checked baoyu-image-gen and article-illustrator split."
+    },
+    {
+      "id": "resume-001",
+      "query": "根据我的项目经历优化 AI 应用实习简历，保留真实证据。",
+      "expected_primary": "resume-optimizer",
+      "expected_support": [
+        "resume-backend-project-optimizer",
+        "shushu-internship-tool"
+      ],
+      "must_not_top1": [
+        "generic rewrite"
+      ],
+      "rationale": "Resume optimization with evidence should use resume skills, not generic prose.",
+      "inspection_notes": "Checked resume optimizer route family and internship-prep overlap."
+    },
+    {
+      "id": "wechat-miniapp-001",
+      "query": "微信小程序发布前帮我做提审前检查，看看云函数和 demo fallback 风险。",
+      "expected_primary": "wechat-miniapp-preflight-review",
+      "expected_support": [
+        "browser-testing-with-devtools"
+      ],
+      "must_not_top1": [
+        "frontend-design"
+      ],
+      "rationale": "Mini program release QA has dedicated preflight route.",
+      "inspection_notes": "Checked wechat-miniapp-preflight-review route and cloud/demo risk focus."
+    },
+    {
+      "id": "futu-supervisor-closer-001",
+      "query": "跑一下 Futu adaptive supervisor，把今天 stale packet 关掉，直到 daily_health ok 或只剩外部 blocker。",
+      "expected_primary": "futu-supervisor-closer",
+      "expected_support": [
+        "futuapi"
+      ],
+      "must_not_top1": [
+        "futuapi"
+      ],
+      "rationale": "Adaptive scheduler stale-packet closure is the new closure skill, not generic Futu brokerage/API handling.",
+      "inspection_notes": "Route should inspect scheduler packet and adaptive task ledger first, preserving SIMULATE/non-entry boundaries."
+    },
+    {
+      "id": "network-lifeline-001",
+      "query": "GitHub 开 VPN 就打不开，先别乱改 FIClash，看看是不是会把 Codex 断网。",
+      "expected_primary": "codex-network-lifeline-diagnoser",
+      "expected_support": [
+        "diagnose"
+      ],
+      "must_not_top1": [
+        "debugging-and-error-recovery"
+      ],
+      "rationale": "VPN/proxy/DNS debugging that can cut off Codex needs the lifeline diagnosis route.",
+      "inspection_notes": "Route should gather OpenAI/GitHub/proxy/DNS read-only evidence before any mutation."
+    },
+    {
+      "id": "interview-portfolio-001",
+      "query": "帮我准备项目1面试，把 CodeHarness 和 Enterprise DataCopilot 的证据整理成能讲的作品集故事。",
+      "expected_primary": "interview-portfolio-evidence-packager",
+      "expected_support": [
+        "interview-officer",
+        "resume-optimizer"
+      ],
+      "must_not_top1": [
+        "interview-officer"
+      ],
+      "rationale": "Evidence packaging and reusable project story preparation lead with the portfolio packaging skill; mock interview is secondary.",
+      "inspection_notes": "Route should inspect project/eval/resume evidence and avoid unproven production claims."
+    },
+    {
+      "id": "notion-morning-evidence-001",
+      "query": "今天晨间导师给我一个 No Evidence 恢复计划，只要一条主线和一个可见产出。",
+      "expected_primary": "notion-morning-evidence-coach",
+      "expected_support": [
+        "notion:notion-research-documentation"
+      ],
+      "must_not_top1": [
+        "notion:notion-spec-to-implementation"
+      ],
+      "rationale": "Morning diary supervision with No Evidence recovery is a recurring personal workflow, not a Notion implementation spec.",
+      "inspection_notes": "Route should keep missing evidence explicit and avoid inventing progress."
+    }
+  ]
+}

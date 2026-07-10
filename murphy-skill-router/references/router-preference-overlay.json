@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "mode": "shadow_preference_overlay",
+  "enabled": true,
+  "generated_at": "2026-07-10T00:00:00Z",
+  "policy": {
+    "ttl_days": 30,
+    "explicit_verified_threshold": 1,
+    "inferred_verified_threshold": 3,
+    "inferred_min_tasks": 2,
+    "model_advisory_activation": false,
+    "auto_promote": false
+  },
+  "active_preferences": {},
+  "shadow_preferences": {},
+  "quarantined": {},
+  "summary": {
+    "events_seen": 0,
+    "events_valid": 0,
+    "duplicates_ignored": 0,
+    "invalid_ignored": 0,
+    "active": 0,
+    "shadow_only": 0,
+    "quarantined": 0
+  }
+}
