@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+current-release.json
+baselines/
+candidates/
+releases/
+references/baseline-*.json
+references/capability-catalog.json
+references/capability-overrides.json
+references/eval-freeze.json
+references/evolution-decisions.jsonl
+references/evolution-log.jsonl
+references/route-feedback.jsonl
+references/evolution-reports/
+references/*.bak-*

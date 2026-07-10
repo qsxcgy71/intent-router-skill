@@ -1,0 +1,52 @@
+{
+  "version": 2,
+  "generation_policy": "public example only; generate the real catalog from installed SKILL.md metadata",
+  "source_roots": ["local"],
+  "inventory_count": 4,
+  "capabilities": {
+    "futu-supervisor-closer": {
+      "name": "futu-supervisor-closer",
+      "description": "Close a bounded Futu supervisor evidence loop without authorizing real trading.",
+      "capability_type": "local_skill",
+      "source": "local/futu-supervisor-closer/SKILL.md",
+      "aliases": ["paper-trading supervisor"],
+      "risk_class": "financial",
+      "dependencies": {"environment": [], "connectors": [], "plugins": [], "permissions": []},
+      "availability": {"kind": "installed_skill"},
+      "fallback": "Keep the route read-only or simulated and request explicit approval for any external action."
+    },
+    "codex-network-lifeline-diagnoser": {
+      "name": "codex-network-lifeline-diagnoser",
+      "description": "Diagnose the Codex network lifeline read-only before suggesting configuration changes.",
+      "capability_type": "local_skill",
+      "source": "local/codex-network-lifeline-diagnoser/SKILL.md",
+      "aliases": ["network lifeline"],
+      "risk_class": "read_only",
+      "dependencies": {"environment": [], "connectors": [], "plugins": [], "permissions": []},
+      "availability": {"kind": "installed_skill"},
+      "fallback": "Report connectivity evidence and preserve a rollback path."
+    },
+    "interview-portfolio-evidence-packager": {
+      "name": "interview-portfolio-evidence-packager",
+      "description": "Package repository evidence into an interview-ready project narrative.",
+      "capability_type": "local_skill",
+      "source": "local/interview-portfolio-evidence-packager/SKILL.md",
+      "aliases": ["interview evidence pack"],
+      "risk_class": "workspace_write",
+      "dependencies": {"environment": [], "connectors": [], "plugins": [], "permissions": []},
+      "availability": {"kind": "installed_skill"},
+      "fallback": "Use a direct repository evidence review."
+    },
+    "notion-morning-evidence-coach": {
+      "name": "notion-morning-evidence-coach",
+      "description": "Produce a morning evidence checkpoint from already-sanitized status fields.",
+      "capability_type": "local_skill",
+      "source": "local/notion-morning-evidence-coach/SKILL.md",
+      "aliases": ["morning evidence coach"],
+      "risk_class": "sensitive",
+      "dependencies": {"environment": [], "connectors": ["notion"], "plugins": [], "permissions": []},
+      "availability": {"kind": "runtime_connector", "name": "notion"},
+      "fallback": "Use a No Evidence template without reading private source text."
+    }
+  }
+}

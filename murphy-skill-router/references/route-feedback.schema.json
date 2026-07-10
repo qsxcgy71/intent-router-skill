@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Router v3 sanitized post-task outcome",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "event_id", "decision_id", "context_key", "task_id", "intent_family",
+    "recommended_skill", "final_skill", "outcome", "failure_class",
+    "evidence_source", "verification_status", "risk_class",
+    "availability_status", "release_id", "catalog_fingerprint",
+    "final_skill_fingerprint", "timestamp"
+  ],
+  "properties": {
+    "event_id": {"type": "string", "maxLength": 200},
+    "decision_id": {"type": "string", "maxLength": 200},
+    "context_key": {"type": "string", "maxLength": 200},
+    "task_id": {"type": "string", "maxLength": 200},
+    "intent_family": {"type": "string", "maxLength": 200},
+    "recommended_skill": {"type": "string", "maxLength": 200},
+    "final_skill": {"type": "string", "maxLength": 200},
+    "outcome": {"enum": ["success", "corrected_success", "failed", "abandoned"]},
+    "failure_class": {"enum": ["none", "route_miss", "dependency_miss", "execution_failure", "intent_changed", "ambiguous"]},
+    "evidence_source": {"enum": ["explicit_user_correction", "agent_inference", "test_feedback", "model_advisory"]},
+    "verification_status": {"enum": ["verified_success", "unverified", "failed"]},
+    "risk_class": {"enum": ["read_only", "workspace_write", "external_action", "sensitive", "financial"]},
+    "availability_status": {"enum": ["available", "missing_dependency", "plugin_required", "blocked"]},
+    "release_id": {"type": "string", "maxLength": 200},
+    "catalog_fingerprint": {"type": "string", "maxLength": 200},
+    "final_skill_fingerprint": {"type": "string", "maxLength": 200},
+    "timestamp": {"type": "string", "format": "date-time"}
+  }
+}
