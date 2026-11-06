@@ -370,6 +370,7 @@ These cards come from recent memory evidence. They are the first place to check 
 | `mcp-builder` | Build MCP server integrations | Tool-channel work, not static skills. |
 | `notion-spec-to-implementation` | Turn Notion specs into implementation plans/tasks | Requires Notion context/tools. |
 | `create-expert-skill` | Convert expert knowledge into production skill | Higher rigor than quick local skill. |
+| `skill-system-upgrader` | 系统化改造已有 Skill；升级 Skill 的工作地图、工具、验证与反馈机制 | Local source: `~/.codex/skills/skill-system-upgrader/SKILL.md`. First inspect and diagnose, confirm missing acceptance criteria, then stage bounded changes. Excludes ordinary typo edits, new-skill creation and generic task routing. Uses local file/tools as needed; no required paid service. This map sync does not refresh the frozen deterministic catalog; a new chat/inventory refresh may be needed for automatic discovery. |
 | `superpowers:writing-skills` | Edit/create skills with validation discipline; 改这个 skill, 加 eval case, 验证 skill, router 迭代 | Use for this router and reusable skills. |
 
 ## Hold / Not A Codex Skill

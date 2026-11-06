@@ -3,11 +3,11 @@
 ## After adding or updating a skill
 
 1. Inspect the installed `SKILL.md` frontmatter and verify the skill is in an active root.
-2. Run `python3 scripts/build_capability_catalog.py`.
-3. Review the generated catalog diff. It may contain metadata, logical source, fingerprint, aliases, dependency names, risk, availability policy, and fallback only.
+2. For ordinary sync, update the candidate `skill-map.md` route and process cases. Do not run the catalog builder over frozen release inputs. The Agent can read current installed frontmatter while the optional deterministic CLI retains its existing catalog.
+3. If a catalog/rule refresh is actually required, stage it as a separate evaluation-input maintenance change. Check `eval-freeze.json` first; a frozen-file change is deferred until that review is authorized. Do not rewrite freeze hashes merely to pass the gate. Generated catalog content remains limited to metadata, logical source, fingerprint, aliases, dependency names, risk, availability policy, and fallback.
 4. Add manual aliases or dependency categories to `capability-overrides.json` when metadata cannot express a stable distinction.
 5. Keep `skill-map.md` entries and ambiguity notes when they already provide correct explicit routing.
-6. Add synthetic cases to train for rule development. Add truly unseen wording to heldout and freeze it before implementation. Put high-risk cases in safety, preserved old behavior in regression, and close-candidate cases in ambiguity. Never reuse an id across suites.
+6. Add process examples for playbook/map changes. For an authorized evaluation-input refresh, add synthetic training cases and prepare unseen heldout wording before implementation. Existing frozen suites remain unchanged during ordinary maintenance. Never reuse an id across suites.
 7. Do not copy private task text into any dataset. Use an abstract task category and a short synthetic paraphrase.
 8. A skill/catalog fingerprint change automatically stales any matching feedback preference. Rebuild and review the overlay; never carry an old preference across unreviewed capability drift.
 
@@ -27,6 +27,7 @@ Run from a candidate workspace:
 ```bash
 PYTHONPYCACHEPREFIX=/private/tmp/codex_pycache python3 scripts/test_router_v2.py
 PYTHONPYCACHEPREFIX=/private/tmp/codex_pycache python3 -m pytest -q scripts/test_router_feedback.py
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider scripts/test_task_retrospective.py scripts/test_verification_evidence.py
 PYTHONPYCACHEPREFIX=/private/tmp/codex_pycache python3 scripts/test_evolution_system.py
 PYTHONPYCACHEPREFIX=/private/tmp/codex_pycache python3 scripts/eval_router_v2.py --suite train --show-failures
 PYTHONPYCACHEPREFIX=/private/tmp/codex_pycache python3 scripts/eval_router_v2.py --suite heldout --show-failures
@@ -39,6 +40,10 @@ PYTHONPYCACHEPREFIX=/private/tmp/codex_pycache python3 scripts/evolution_gate.py
 ```
 
 Also run the system skill `quick_validate.py` against the candidate skill directory. `parse_router_eval_cases.py` must continue to parse all case-list YAML blocks and ignore the schema block.
+
+Run the narrow affected checks first; perform the required full release checks once the candidate is ready. Use the unchanged live gate against the candidate to preserve comparison with live files and the immutable baseline. Save its output under the candidate; do not use `--write-report` when live writes are not authorized. Also evaluate the candidate modules/map directly: the live gate imports its own runtime, so its summary alone is not proof that changed candidate code was executed.
+
+For new passing review records, use bound receipts described in `router-v3-feedback-loop.md`. Record the checked files (including relevant scripts, rules, map and test inputs), command/assessment, hashes and actual result. Recheck receipts after content changes. Ordinary format validation is not behavioral acceptance.
 
 ## Freeze and tuning discipline
 
@@ -53,6 +58,8 @@ Also run the system skill `quick_validate.py` against the candidate skill direct
 Passing the gate means “eligible for human review,” not “promoted.” The default strategy is `manual_approval_after_gate`; `--auto` is rejected.
 
 After a separate explicit approval, the promotion script first saves a complete pre-promotion live snapshot, writes the candidate release, and points rollback at that snapshot. The rollback command restores that snapshot. Do not edit the immutable `baseline-2026-06-17` directory.
+
+Current rollback restores prior file contents but prunes only the script names in its existing allowlist. New helper/test files outside that list may remain unreferenced after rollback; do not claim an exact directory-tree restoration. Review such leftovers separately instead of changing the protected promotion scripts during an ordinary maintenance candidate.
 
 ## Availability maintenance
 

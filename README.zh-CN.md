@@ -2,6 +2,12 @@
 
 [English README](README.md) | 中文
 
+## 2026-11：让改造结果有可核验的证据
+
+[Murphy Router 子目录](murphy-skill-router/) 已增加工作地图、验证回执、旧复盘记录兼容，以及自动检查、AI 评估、人工确认的独立状态。[skill-system-upgrader](skill-system-upgrader/) 提供可复用的“诊断—确认标准—改造—验证”流程。
+
+前后对比实验中，12 个构造的证据验证场景从 **3/12 判断正确提升到 12/12**；原有本地路由评测仍为 **123/124 首选正确**。本轮实验证明的是证据检查能力提升，路由准确率没有变化。详见[改造思路、实验结果与复现方法](experiments/verification-upgrade/README.zh-CN.md)。
+
 `intent-router` 是一个可安装的 agent skill，用来把用户意图路由到最合适的 skill、plugin、connector、app tool 或直接工作流。
 
 它适合这样的场景：你已经装了很多 skill / plugin，它们都挺有用，但你不想每次都记住名字、触发条件和边界。这个 router 会把一次请求当成一个小型 RAG 问题来处理：理解意图、召回候选、检查证据、重排、展示分诊理由，然后再推荐或执行。

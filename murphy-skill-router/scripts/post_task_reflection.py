@@ -103,12 +103,22 @@ def record_event(payload: dict, ledger: Path = DEFAULT_LEDGER) -> dict:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--event", type=Path, required=True, help="JSON file with structured fields only")
-    parser.add_argument("--ledger", type=Path, default=DEFAULT_LEDGER)
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--event", type=Path, help="legacy structured route outcome")
+    mode.add_argument("--review", type=Path, help="sanitized actionable task/skill lesson")
+    parser.add_argument("--ledger", type=Path, help="override the selected mode's runtime ledger")
+    parser.add_argument("--dry-run", action="store_true", help="validate without writing any files")
+    parser.add_argument("--evidence-root", type=Path, help="root for review receipt and subject paths; defaults to ledger parent")
     args = parser.parse_args()
-    payload = json.loads(args.event.read_text(encoding="utf-8"))
-    clean = record_event(payload, args.ledger)
-    print(json.dumps({"recorded": True, "event_id": clean["event_id"]}, ensure_ascii=False))
+    payload = json.loads((args.review or args.event).read_text(encoding="utf-8"))
+    if args.review:
+        from task_retrospective import DEFAULT_LEDGER as REVIEW_LEDGER, record_review
+
+        result = record_review(payload, args.ledger or REVIEW_LEDGER, dry_run=args.dry_run, evidence_root=args.evidence_root)
+    else:
+        clean = sanitize_event(payload) if args.dry_run else record_event(payload, args.ledger or DEFAULT_LEDGER)
+        result = {"recorded": not args.dry_run, "event_id": clean["event_id"]}
+    print(json.dumps(result, ensure_ascii=False))
     return 0
 
 

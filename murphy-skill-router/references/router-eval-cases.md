@@ -2,6 +2,31 @@
 
 Last updated: 2026-06-17.
 
+## Systematic Skill Upgrade Process Cases (2026-11-07)
+
+These cases assess the Agent playbook/map, not the frozen deterministic CLI. Record AI assessment separately from programmatic parsing and human acceptance.
+
+```yaml
+- id: skill-upgrade-system-positive
+  query: "把已有 Skill 改造成有工作地图、可靠工具、验证和反馈的系统；先诊断。"
+  expected_primary: skill-system-upgrader
+  first_action: "读取目标 Skill 与最小相关文件，给出诊断和缺失的验收标准。"
+  must_do: ["保留已有有效工具", "先确认缺失标准", "先建独立候选"]
+  must_not_select: ["普通任务执行路线"]
+- id: skill-upgrade-typo-exclusion
+  query: "只修正这个 SKILL.md 中的一个错别字，其他内容不动。"
+  expected_primary: "Direct execution"
+  first_action: "定位并修正指定错字。"
+  must_do: ["保持改动范围", "不触发系统化改造访谈"]
+  must_not_select: ["skill-system-upgrader"]
+- id: skill-upgrade-readonly-preserved
+  query: "用 skill-system-upgrader 只读诊断这个 Skill，不要修改文件。"
+  expected_primary: skill-system-upgrader
+  first_action: "只读检查目标并报告诊断。"
+  must_do: ["不写候选或反馈文件", "不执行会写文件的验证命令", "只报告建议与未验证项"]
+  must_not_select: ["自动发布路线"]
+```
+
 Use these as golden cases after changing `SKILL.md` or `skill-map.md`. They are process tests: the answer should choose the expected primary route, avoid forbidden routes, respect clarification/read-only rules, and name the first observable action.
 
 ## Case Schema

@@ -11,6 +11,12 @@ This directory contains a sanitized, reviewable public source package derived fr
 - privacy-preserving shadow comparison
 - bounded post-task feedback and temporary Top-3 preference overlay
 - candidate gate, promotion, and rollback tooling
+- task-level review records with explicit single-task/lasting-rule scope
+- command receipts and subject fingerprints, with independent automatic/AI/human states
+
+## 2026-11 maintenance upgrade
+
+Start with the work map in `SKILL.md`. Routine route-map sync does not refresh frozen catalog/rule inputs. New passing review claims require bound receipts; historical records remain readable and are marked `legacy_unbound` when no binding exists. See [the feedback contract](references/router-v3-feedback-loop.md) and [the before/after experiments](../experiments/verification-upgrade/README.zh-CN.md).
 
 ## Deliberately excluded
 
@@ -29,10 +35,22 @@ Routing is recommendation-only. A matching skill does not authorize execution. E
 
 ## Validation
 
-The live candidate passed 42 focused/system tests, quick validation, and all six evaluation suites before packaging. To configure a local copy, first generate its own capability catalog:
+The November live candidate passed 88 distinct focused/system tests, structural validation, and the existing promotion gate. The paired local routing results remained unchanged (123/124 Top-1, 124/124 Hit@3). The public source package has a self-contained subset of 46 review/evidence tests, which passed without the private catalog:
+
+```bash
+# Run from the repository root; pytest is needed only for these tests.
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  murphy-skill-router/scripts/test_task_retrospective.py \
+  murphy-skill-router/scripts/test_verification_evidence.py
+python3 experiments/verification-upgrade/run_experiments.py --output /tmp/router-comparison.json
+```
+
+The experiment uses only the Python standard library. `skill-system-upgrader/` is a separately installable skill; copy it into your agent's skills directory when using that workflow.
+
+For a fresh, unfrozen local setup, generate your own capability catalog from this subdirectory:
 
 ```bash
 python3 scripts/build_capability_catalog.py
 ```
 
-Create a local `current-release.json` and empty `references/route-feedback.jsonl` before running the full live validation sequence. Both are deliberately excluded from this public package.
+Full live release validation additionally requires your own overrides, release state, immutable baseline, evaluation freeze record and empty runtime ledger. These are deliberately excluded from the public package. A fresh clone cannot reproduce the author's private frozen-config gate by creating placeholder files. For an already frozen deployment, follow the separate evaluation-input maintenance procedure before refreshing its catalog.

@@ -1,11 +1,23 @@
 ---
 name: murphy-skill-router
-description: Use when Murphy explicitly asks which skill, plugin, connector, app, tool, or workflow to use, says "自动判断", "帮我分诊", "按合适的 skill/plugin", or when multiple installed skill/plugin families could materially change the next action. Also use automatically after Codex participates in skill install/update/rule changes or explicit removal/disable requests to sync the global map. Do not trigger merely because a task is non-trivial.
+description: Route Murphy's skill/plugin/tool choices when requested or when competing capabilities materially change the next action. At task completion, review skill use when a skill was used or routing friction occurred, and when Murphy asks for 复盘, 总结 skill 使用, or skill 进化. Sync the map after skill changes. Skip trivial answers and generic summaries with no skill lesson.
 ---
 
 # Murphy Skill Router
 
 Lightweight global router for Murphy's installed skills, plugins, connectors, apps, and direct tool routes. Do not make Murphy memorize names. Treat each user request like a tiny RAG query: retrieve candidate routes, cite the matching trigger evidence, rerank to the smallest useful set, then recommend or execute.
+
+## Work Map And Reading Entry Points
+
+| Stage | Input → output | Branch / dependency | Completion evidence |
+|---|---|---|---|
+| Route | User intent, output, scope → one primary and up to two secondary routes | Use `references/skill-map.md`; trivial tasks go direct; named artifacts are not automatically invoked | Matching trigger, first action, available capability |
+| Execute | Selected skill body and available tools → requested result | Open the chosen skill; honor current authorization and real dependencies | Task-specific result, not merely a route recommendation |
+| Review | Actual outcome/correction → scoped finding or no record | Read the task-review section of `references/router-v3-feedback-loop.md` only when a reusable lesson exists | Positive, negative and preserved cases; distinguish single-task feedback from a lasting rule |
+| Verify | Changed subjects and checks → current evidence by dimension | `scripts/verification_evidence.py` binds command receipts; AI/human assessments remain distinct | File hashes, receipt hashes, actual outcome; changed subjects invalidate prior evidence |
+| Maintain | Supported finding → candidate, tests, gate, authorized release | Read `references/router-v2-maintenance.md`; ordinary map sync differs from a frozen-input refresh | Existing promotion gate, reviewed diff, preserved baseline and rollback |
+
+This playbook/map guides the executing agent. The optional deterministic `router_v2.py` CLI uses a frozen catalog/rule snapshot and cannot be assumed to discover every newly installed skill. A passing CLI suite does not validate all Agent choices or downstream outcomes.
 
 ## Global Scope And Limits
 
@@ -15,9 +27,13 @@ It is not a background filesystem watcher or mandatory middleware. It cannot not
 
 New or changed skills may require a Codex restart or skill inventory refresh before they appear in the active skill list. The map can still record the intended route and caveat.
 
+Skills should supply useful expertise and leave room for model judgment. Prefer direct tools when they already satisfy the request. A skill's fixed sequence, output template, or extra approval step is not a host requirement. Follow current user intent and established authorization; inspect and repair a conflicting skill rule rather than allowing it to stall the task. Preserve real permission, privacy, correctness, and external-action boundaries.
+
+Post-task review is an end-of-task instruction, not a background hook. It can run in the current conversation when this skill is selected; it cannot guarantee invocation in every other chat. Review once per completed task or meaningful stopped attempt, not after each tool call, substep, or review of the review itself.
+
 ## Safety Gate
 
-If Murphy says "只读", "review", "不要改文件", or asks for critique only, do not install, sync, edit, stage, commit, or write files. Treat changes as recommendations unless Murphy later asks to apply them. Treat "评估" as read-only only when Murphy has not also asked to apply changes.
+If Murphy says "只读", "不要改文件", or asks only for review/critique, do not install, sync, edit, stage, commit, or write files. Treat changes as recommendations unless Murphy asks to apply them. The words "review", "评估", or "复盘" alone do not cancel an accompanying instruction to fix or apply changes.
 
 If Murphy names a skill:
 
@@ -27,14 +43,14 @@ If Murphy names a skill:
 
 ## Cost And External Side-Effect Gate
 
-Before using any route that may spend money, consume paid quota, create API keys, call a metered API, deploy, publish, share externally, send messages/email, write calendar events, create automations, mutate cloud data, or delete data, state the likely side effect and get Murphy's approval unless all of these are already clear in the current turn:
+Before using any route that may spend money, consume paid quota, create API keys, call a metered API, deploy, publish, share externally, send messages/email, write calendar events, create automations, mutate cloud data, or delete data, state the likely side effect and get Murphy's approval unless all of these are already clear in the current conversation:
 
 - exact target or account
 - scope and rough cost/quota risk when cheaply knowable
 - production vs preview/public vs private destination
 - whether the action writes external state
 
-Having an API key configured is not approval to spend quota. For OpenAI API work, use secure key setup flows when keys are needed, never ask Murphy to paste secrets in chat, and ask for approval before the first paid or quota-consuming call in a task.
+Having an API key configured is not approval to spend quota. For OpenAI API work, use secure key setup flows when keys are needed, never ask Murphy to paste secrets in chat, and obtain required approval before a paid or quota-consuming call that is not already covered by the user's established authorization.
 
 If Murphy explicitly asks for an external action like deployment, treat that as approval of the intent, but still confirm missing target/account/env details or any production/public/cost risk.
 
@@ -62,7 +78,9 @@ If the needed plugin is not callable, do not pretend it was used. Recommend it, 
 7. If a route uses plugins/connectors/apps/tools, run the **Plugin And Connector Preflight**.
 8. If a route may spend quota or mutate external state, run the **Cost And External Side-Effect Gate**.
 9. After choosing an installed primary skill, open that skill's `SKILL.md` before using it. The map decides what to open first; it never replaces the primary skill body. Direct routes and app/tool routes may not have a local skill body.
-10. If the task is trivial, answer directly with the short no-skill clause.
+   If a relevant earlier finding is known, retrieve only recent records for that exact skill with `scripts/task_retrospective.py --skill <name> --limit 5`. Recheck the evidence against the current task; a proposal is not an established rule.
+10. If the task is trivial, answer directly. Do not add routing ceremony.
+11. At task completion, run the **Post-Task Review And Skill Evolution** check before the final answer when skills were used or routing friction occurred. For a completion-only invocation, skip initial routing and go directly to that check.
 
 Say: `我会用 X，因为 Y。`
 
@@ -76,15 +94,13 @@ Use this loop silently before answering or acting:
 4. **Rerank:** choose exactly one primary route and at most two secondary routes. Prefer output surface first, then workflow risk, then tool dependency.
 5. **Threshold:** use the Question Gate below before asking anything.
 6. **Answer synthesis:** state the primary route in one sentence, include the first observable action, then recommend or execute.
-7. **Feedback loop:** if the route fails, record the failure mode mentally and use the closest ambiguity rule or dependency preflight before retrying.
+7. **Feedback loop:** recover from a failed route using the closest ambiguity rule or dependency preflight, then retain the evidence needed for the post-task review. Do not leave a reusable correction only in conversational memory.
 
 ### Upstream Discovery Gate
 
-Choose an upstream thinking/design route before search, implementation, brokerage, deployment, or automation when the request is broad, emotionally negative, multi-system, or high-risk.
+Use a thinking/design route when the user requests design exploration or when a missing consequential requirement prevents safe implementation. Emotional wording or keywords such as "重新搜索", "可验证", and "定时任务" do not independently require a design gate.
 
-Use `superpowers:brainstorming` as primary when Murphy asks to rethink, rebuild, redesign, personalize, research alternatives, adapt another project, confirm direction, create an evolvable/verifiable system, or combine current research with implementation/automation. Common cues include "垃圾", "重做", "重新搜索", "别人项目基础上", "个性化", "可验证", "可迭代", "进化", "核心需求", "修改方向", "前瞻性", "预定时间", and "定时任务". First action: inspect the smallest project context, then ask one clarifying question about purpose/constraints/success criteria. Do not jump straight to solution search, code, live trading, deployment, or scheduling.
-
-Use `quick-requirement-clarifier` instead when the user describes a small existing-repo change that is fuzzy but close to implementable. Use `project-intake-interview` when the user is starting a new project from scratch and asks for intake. Use implementation routes only when the requirement is already clear or Murphy explicitly says to skip clarification.
+Use `brainstorming` for requested design exploration. Use `quick-requirement-clarifier` for a consequential unresolved detail in an existing task, and `project-intake-interview` for requested new-project intake. Clear authorized search, implementation, and scheduling requests can go directly to the relevant route; ask only for information needed for the next consequential action. Keep live trading and other real external side effects subject to the host's permissions.
 
 For trading/finance system requests, this gate is extra important: `Public Equity Investing`, `futuapi`, and Automations can be secondary, but the first route should clarify the strategy, risk boundary, data sources, validation loop, trading frequency, and whether any action could become real-money or external-state mutation.
 
@@ -98,42 +114,7 @@ Only show secondary skills when they change the action, and explain the role or 
 
 ### User-Visible Routing Note
 
-For every routed turn, briefly expose the routing process. This is a contract, not optional polish. Do not dump the full skill library; show only the top 2-3 relevant candidates.
-
-The note must include:
-
-- the user cue or facet that triggered routing
-- 2-3 candidates considered
-- `murphy-skill-router` as one visible candidate in every routed turn; phrase it exactly as `候选为 murphy-skill-router, <A>, <B>` or equivalent
-- the chosen primary skill or direct route and why it wins
-- any auxiliary/backup skill and when it would matter
-- at least one rejected candidate and why it was not used
-- the next observable action
-
-Format:
-
-```markdown
-分诊过程：识别到 <user cue>; 候选为 murphy-skill-router, <A>, <B>; 选择 <primary/direct>，因为 <positive evidence>; 未用 <candidate>，因为 <negative evidence>; 下一步 <first observable action>。
-```
-
-If using skills:
-
-```markdown
-主 skill: <skill> — <why selected>.
-辅助/备选: <skill> — <why included or when it would be used>.
-```
-
-If not using a dedicated skill:
-
-```markdown
-不调用专门 skill，因为 <reason>. 候选 <A>/<B> 没用的原因分别是 <anti-cue or mismatch>. 我会直接 <first action>.
-```
-
-For trivial one-step tasks, the note may be one short clause, but still name `murphy-skill-router` as a candidate:
-
-```markdown
-不调用专门 skill，因为这是一次性直接回答；候选为 murphy-skill-router, direct-route；我会直接给结果。
-```
+When a skill changes the approach, say which skill and why, with the first observable action. One sentence is normally enough. Explain alternatives only for a real ambiguity, a routing mistake, or a user request for comparison. Do not manufacture rejected candidates or repeatedly announce the router. Trivial direct answers need no routing note.
 
 ### Query Facets
 
@@ -195,9 +176,9 @@ Threshold:
 - top route score >= 8 and margin >= 2: route directly
 - margin < 2: use the relevant ambiguity rule or ask one funnel question
 - missing output surface, target platform, write scope, or location where wrong choice would touch files: ask one funnel question
-- trivial task: answer directly with the short no-skill clause
+- trivial task: answer directly
 
-For any non-trivial route, expose a short candidate/choice/rejected-candidate explanation. Keep numeric score, exact margin, and detailed threshold reasoning mental unless Murphy asks why, a route fails, or eval cases are being updated.
+Keep candidate scores and detailed threshold reasoning internal. Explain the selected route when it affects the work; explain alternatives when they help resolve a real choice.
 
 ### Question Gate
 
@@ -305,7 +286,7 @@ Before finishing a sync, check:
 
 ## Routing Feedback Protocol
 
-Run this whenever Murphy corrects the route, a chosen skill fails for avoidable reasons, or a new natural phrase appears:
+Use the post-task review below for new findings. Existing route-only failures may still use this maintenance procedure. A one-off wording difference does not require persistent edits:
 
 1. Identify the missed cue, wrong candidate, missing caveat, or unnecessary question.
 2. Classify the failure as one of: `facet_miss`, `retrieval_miss`, `evidence_miss`, `rerank_miss`, `threshold_miss`, `dependency_miss`, `mode_miss`, `map_stale`, `tool_name_stale`, `safety_gate_miss`, `plugin_callability_miss`, `cost_gate_miss`, or `external_side_effect_miss`.
@@ -314,6 +295,24 @@ Run this whenever Murphy corrects the route, a chosen skill fails for avoidable 
 5. Re-run the affected eval cases mentally or with subagent review before finalizing.
 
 If the turn is read-only, do not update eval or map files; report the exact eval/map changes that should be made.
+
+## Post-Task Review And Skill Evolution
+
+Silently check whether the skill helped achieve the requested outcome, whether a better route was missed, whether its actual instructions contradicted our earlier understanding, and whether a rule caused avoidable delay or restricted a useful model/tool capability. Also retain a demonstrated useful technique when it is reusable. Task success alone does not prove that the route was optimal.
+
+Murphy's task-end improvement request supplies standing authorization for narrow, evidence-backed, reversible corrections to this router's playbook/map and user-owned skills implicated by the task, including their trigger descriptions. It does not authorize mass rewrites, deletion, managed/plugin-cache edits, guard-script changes, or external actions. Current read-only instructions and host permissions still control. Router releases still require their candidate gate; unverified ideas remain proposals.
+
+If nothing reusable changed, finish normally. Otherwise read the task-review section of `references/router-v3-feedback-loop.md`, inspect only the implicated skills, and make the finding actionable:
+
+- Separate observation from inference and name the evidence. An untried alternative remains unverified.
+- Classify the cause: skill misunderstanding, retrieval/ranking miss, skill gap, overconstraint, over/under-triggering, dependency failure, execution failure, or a reusable success.
+- Specify the old understanding/rule, corrected understanding, smallest edit, future positive trigger, exclusion, and a case whose behavior must remain intact. Compare direct execution as a valid alternative.
+- Apply a supported, reversible local correction within the user's existing maintenance authorization; do not ask again solely because a skill invented a second approval step. Use a candidate and gate for router releases. Read-only requests permit review only. Unverified ideas remain proposals, not live rules.
+- Validate the affected behavior and adjacent exclusions, sync the relevant map/card, and record the actual state with `scripts/post_task_reflection.py --review <sanitized-review.json>`. Use `--dry-run` when writes are prohibited. This recorder stores evidence; it does not execute edits or grant approval.
+
+Changing only a feedback log is not skill evolution. A durable fix must reach the appropriate `SKILL.md` description/body, map, or retrieval rule. A skill absent from Top-3 requires a retrieval/map candidate; never pretend the temporary v3 preference overlay repaired it. For managed/plugin skills, use a supported source/override or record a scoped router exception, with the remaining limitation stated.
+
+Briefly report only material findings, edits, validation, and unresolved proposals in the task's final answer. Distinguish `proposed`, `applied`, `validated`, `deferred`, and `rolled_back`; local checks do not establish improvement on future real tasks. On the next relevant use, check the changed rule against the outcome and narrow or roll it back if it regresses.
 
 ## Self-Evolution Protocol
 
@@ -328,14 +327,19 @@ Runtime files:
 - `references/evolution-reports/`: human-readable first-run, failure, patch, second-run, and promotion reports.
 - `current-release.json`: current live release and rollback pointer.
 
+Baseline and release directories store the playbook as `SKILL.snapshot.md`, not
+`SKILL.md`. This preserves rollback content without exposing every snapshot as
+another installed skill. Candidate workspaces must remain outside the installed
+`~/.codex/skills` tree for the same reason.
+
 Workflow:
 
 1. For route failures, append a desensitized log row unless Murphy asked for read-only analysis.
 2. Run `python3 scripts/mine_router_failures.py --since 7d` to summarize repeated failures.
 3. Run `python3 scripts/synthesize_router_cases.py --input references/evolution-log.jsonl` to create pending eval cases.
-4. Run `python3 scripts/propose_router_patch.py` to create a bounded candidate. Candidate edits may only change route triggers, anti-cues, ambiguity rules, first actions, and eval cases.
+4. Create a bounded candidate outside the installed skills tree, from the current live files. `python3 scripts/propose_router_patch.py` handles simple route/eval patches. Explicitly requested skill-evolution work may also update the playbook, supporting references, and feedback helpers; retain a base fingerprint and a reversible diff.
 5. Run `python3 scripts/evolution_gate.py --candidate candidates/<id> --suite all`. The gate must preserve baseline `hit@3=100%`, heldout/safety/regression suites, guard scripts, safety gate phrases, router-as-meta-pass behavior, visible routing notes, first observable actions, and diff budgets.
-6. If the gate passes, generate a promotion recommendation packet only. Never auto-promote. A later, separate turn with Murphy's explicit approval may run `python3 scripts/promote_router_candidate.py --candidate candidates/<id> --approved-by-user`.
+6. If the gate passes, generate a reviewable change packet. Never auto-promote from scores or telemetry alone. A current explicit request to apply this scoped router update, or an applicable standing authorization, permits `python3 scripts/promote_router_candidate.py --candidate <path> --approved-by-user` in the same turn. If authorization is missing, finish the candidate and checks before asking. Passing a gate is not authorization.
 7. If promotion causes bad behavior, run `python3 scripts/promote_router_candidate.py --rollback`.
 
 Never auto-promote a candidate that edits guard scripts such as `evolution_gate.py`, `promote_router_candidate.py`, `eval_router_dataset.py`, or `router_evolution_lib.py`. Guard-script changes require explicit human review outside the auto-evolution lane.
@@ -370,9 +374,11 @@ Return these bounded, user-explainable fields without chain-of-thought or long i
 
 Allowed risk classes are `read_only`, `workspace_write`, `external_action`, `sensitive`, and `financial`. Allowed availability states are `available`, `missing_dependency`, `plugin_required`, and `blocked`.
 
-`external_action`, `sensitive`, `financial`, plugin installation, account/browser operations, and connector writes require confirmation by default. Model capability, route confidence, or passing evals never remove that requirement.
+`external_action`, `sensitive`, `financial`, plugin installation, account/browser operations, and connector writes return conservative confirmation flags. The executing agent resolves them against actual host rules and authorization already present in the conversation; a recommendation flag alone does not require repeating an answered permission question. Model capability, route confidence, or passing evals never supply authorization.
 
 Block recursive self-modification: when a task asks the Router to modify or promote its own live release, select `Manual router review route`, return `availability_status: blocked`, and generate a candidate packet for human review. Router explanation and read-only route recommendation may still select `murphy-skill-router` itself.
+
+This runtime block prevents the recommendation engine from authorizing its own mutation. It does not prohibit an executing agent from carrying out Murphy's explicit router-maintenance request through the candidate, validation, and authorized promotion workflow.
 
 Run a one-off decision with:
 
@@ -381,6 +387,8 @@ Run a one-off decision with:
 ## Router v3 Post-Task Correction
 
 Router v3 adds a temporary preference overlay after the v2 base decision. It does not rewrite `skill-map.md`, `router-v2-rules.json`, the capability catalog, or any release pointer.
+
+The route-only overlay and the durable task-review workflow are separate. Use the overlay for verified ranking corrections; use `--review` and the task-review section of `references/router-v3-feedback-loop.md` for skill understanding, missing retrieval, instruction changes, or trigger changes.
 
 After a task, accept only the fields in `references/route-feedback.schema.json`. Reject unknown fields and never record a raw prompt, query, free-form note, chain-of-thought, diary/chat/mail/document body, cookie, credential, secret, or personal identifier. `post_task_reflection.py` appends sanitized outcome identifiers to `route-feedback.jsonl`; `build_preference_overlay.py` aggregates them into `router-preference-overlay.json`.
 
@@ -393,6 +401,8 @@ The decision includes a bounded `reflection_advisory` with `context_key`, base a
 ## Capability Catalog And Availability
 
 `references/capability-catalog.json` is generated from installed `SKILL.md` frontmatter plus bounded manual overrides in `references/capability-overrides.json`. The generated catalog may contain names, descriptions, logical source paths, fingerprints, aliases, dependency names, risk defaults, and fallbacks. It must not contain secret values, raw prompts, mail bodies, diary text, cookies, credentials, or machine-specific home paths.
+
+The v3 gate currently freezes the catalog and deterministic rule files as evaluation inputs. For task-end skill discovery, use the current installed frontmatter and this playbook/map. The new task-review workflow does not add a deterministic v2 CLI route. Record a frozen catalog/rule refresh as deferred maintenance rather than silently changing the evaluation snapshot or claiming it was synced.
 
 Refresh the candidate catalog with:
 
@@ -416,7 +426,7 @@ Shadow output remains advisory and cannot write a formal release.
 
 ## Model Review Advisory
 
-Runtime routing uses deterministic map/catalog retrieval and rules. If confidence is below `0.70` or the candidate margin is below `0.08`, Router v2 may return `model_review.review_recommended: true`. It does not call a model automatically.
+The v2 shadow CLI uses deterministic map/catalog retrieval and rules. It is an advisory tool, not mandatory middleware for the executing model. If confidence is below `0.70` or the candidate margin is below `0.08`, Router v2 may return `model_review.review_recommended: true`. It does not call a model automatically.
 
 Offline model help may classify synthetic cases or suggest conflicts, but record only whether a model participated, a version label, and an estimated cost. Do not store the complete prompt, response, chain-of-thought, or key. Model review cannot authorize high-risk execution.
 
@@ -457,11 +467,11 @@ Passing the gate creates a recommendation packet only. It does not mean Router v
 
 Silently verify:
 
-- Did I show the user-visible routing note for non-trivial routed turns?
+- Did I explain the skill choice where it materially changed the approach?
 - Did I choose one primary route?
 - Did I use at most two secondary routes?
 - Did I explain why the primary skill/direct route was selected?
-- Did I explain why visible candidate skills/routes were not selected when no dedicated skill is used?
+- Did I avoid unnecessary candidate lists and repeated routing notes?
 - Did I distinguish recommendation vs execution?
 - Did I treat a named skill correctly as workflow vs artifact?
 - Did I avoid unnecessary questions?
@@ -475,6 +485,7 @@ Silently verify:
 - Did I protect learning mode when Murphy asked to learn?
 - Did I verify current facts with official/current sources when required?
 - Did I mention sync status if skills changed?
+- Did I check for a reusable task lesson, correct a supported skill limitation within scope, and distinguish saved evidence from validated changes?
 
 ## High-Signal Defaults
 
@@ -486,5 +497,6 @@ Silently verify:
 - Polished deliverable/PDF/landing page: `kami`; editable `.pptx`: `pptx` or `pptx-skill`; professional `.docx`: `docx` or `doc`.
 - Obsidian files: `obsidian-markdown`, `obsidian-bases`, or `json-canvas`; live vault operations require `obsidian-cli` and an installed Obsidian CLI.
 - Wiki knowledge tasks: use `wiki-query`, `wiki-explain-page`, `wiki-ingest`, or `wiki-lint`, not Obsidian skills.
-- Skill authoring or router upgrades: `superpowers:writing-skills` plus `write-a-skill` / `create-expert-skill` as needed.
+- Ordinary skill authoring: `write-a-skill` / `create-expert-skill` as needed; use `superpowers:writing-skills` when that workflow is requested or already active.
+- Systematic improvement of an existing skill: `skill-system-upgrader`; inspect the existing workflow, confirm missing acceptance criteria, then make and validate a bounded candidate. Ordinary skill edits retain their narrower authoring route.
 - Plugin/connector work: use the matching plugin/app/tool route when callable; otherwise recommend or request installation only under the install rules.

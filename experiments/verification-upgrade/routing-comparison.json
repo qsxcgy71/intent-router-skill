@@ -1,0 +1,135 @@
+{
+  "scope": "Previously executed paired local frozen-config evaluation. Private catalog and local deployment state are excluded from the public repository. This summary is not a clone-and-run public benchmark.",
+  "suites": [
+    {
+      "suite": "train",
+      "before": {
+        "top1": 24,
+        "total": 24,
+        "hit_at_3": 24,
+        "risk_mismatches": 0,
+        "risk_underclassifications": 0,
+        "confirmation_false_negatives": 0,
+        "availability_misleading": 0
+      },
+      "after": {
+        "top1": 24,
+        "total": 24,
+        "hit_at_3": 24,
+        "risk_mismatches": 0,
+        "risk_underclassifications": 0,
+        "confirmation_false_negatives": 0,
+        "availability_misleading": 0
+      }
+    },
+    {
+      "suite": "heldout",
+      "before": {
+        "top1": 12,
+        "total": 12,
+        "hit_at_3": 12,
+        "risk_mismatches": 0,
+        "risk_underclassifications": 0,
+        "confirmation_false_negatives": 0,
+        "availability_misleading": 0
+      },
+      "after": {
+        "top1": 12,
+        "total": 12,
+        "hit_at_3": 12,
+        "risk_mismatches": 0,
+        "risk_underclassifications": 0,
+        "confirmation_false_negatives": 0,
+        "availability_misleading": 0
+      }
+    },
+    {
+      "suite": "safety",
+      "before": {
+        "top1": 19,
+        "total": 20,
+        "hit_at_3": 20,
+        "risk_mismatches": 0,
+        "risk_underclassifications": 0,
+        "confirmation_false_negatives": 0,
+        "availability_misleading": 0
+      },
+      "after": {
+        "top1": 19,
+        "total": 20,
+        "hit_at_3": 20,
+        "risk_mismatches": 0,
+        "risk_underclassifications": 0,
+        "confirmation_false_negatives": 0,
+        "availability_misleading": 0
+      }
+    },
+    {
+      "suite": "regression",
+      "before": {
+        "top1": 44,
+        "total": 44,
+        "hit_at_3": 44,
+        "risk_mismatches": 0,
+        "risk_underclassifications": 0,
+        "confirmation_false_negatives": 0,
+        "availability_misleading": 0
+      },
+      "after": {
+        "top1": 44,
+        "total": 44,
+        "hit_at_3": 44,
+        "risk_mismatches": 0,
+        "risk_underclassifications": 0,
+        "confirmation_false_negatives": 0,
+        "availability_misleading": 0
+      }
+    },
+    {
+      "suite": "ambiguity",
+      "before": {
+        "top1": 12,
+        "total": 12,
+        "hit_at_3": 12,
+        "risk_mismatches": 0,
+        "risk_underclassifications": 0,
+        "confirmation_false_negatives": 0,
+        "availability_misleading": 0
+      },
+      "after": {
+        "top1": 12,
+        "total": 12,
+        "hit_at_3": 12,
+        "risk_mismatches": 0,
+        "risk_underclassifications": 0,
+        "confirmation_false_negatives": 0,
+        "availability_misleading": 0
+      }
+    },
+    {
+      "suite": "feedback",
+      "before": {
+        "top1": 12,
+        "total": 12,
+        "hit_at_3": 12,
+        "risk_mismatches": 0,
+        "risk_underclassifications": 0,
+        "confirmation_false_negatives": 0,
+        "availability_misleading": 0
+      },
+      "after": {
+        "top1": 12,
+        "total": 12,
+        "hit_at_3": 12,
+        "risk_mismatches": 0,
+        "risk_underclassifications": 0,
+        "confirmation_false_negatives": 0,
+        "availability_misleading": 0
+      }
+    }
+  ],
+  "source_report_sha256": {
+    "live-eval.json": "c0889aa2536fd8c99cee627dea6769a98b4a3a3b470027ee3f8e37814eaa5599",
+    "candidate-eval.json": "9ee483069da9914c7e793e410aba6443431f49c0447d9bce7b2b594cb8581184"
+  }
+}

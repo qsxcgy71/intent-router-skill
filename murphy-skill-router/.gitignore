@@ -11,5 +11,8 @@ references/eval-freeze.json
 references/evolution-decisions.jsonl
 references/evolution-log.jsonl
 references/route-feedback.jsonl
+references/task-retrospectives.jsonl
+evidence/
+.pytest_cache/
 references/evolution-reports/
 references/*.bak-*

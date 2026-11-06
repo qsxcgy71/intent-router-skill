@@ -1,0 +1,175 @@
+{
+  "method": "12 constructed scenarios, API-adapted inputs; not a random or production sample",
+  "baseline": "Immediate pre-upgrade local recorder snapshot; not the older GitHub main version",
+  "runtime": {
+    "python": "3.9.6",
+    "os": "Darwin",
+    "machine": "arm64"
+  },
+  "source_sha256": {
+    "experiments/verification-upgrade/fixtures/pre_upgrade_recorder.py": "51b10f89a9ca027f42bb27c288d2b8f4fa69d1b4087f18f03189ead76194a94e",
+    "murphy-skill-router/scripts/task_retrospective.py": "25cdebbd86294ca665149ed54f5959e776c884045537ac6258dbc0406d5b2512",
+    "murphy-skill-router/scripts/verification_evidence.py": "0634952a20d66b3236d617520616f86587cfc26d6f4b9349195581f48455072b",
+    "experiments/verification-upgrade/run_experiments.py": "e5e26294a58044a66c23e51dc2879827182c11d9e0681e46262bf262813c54f7"
+  },
+  "scenarios": [
+    {
+      "case": "valid_pass",
+      "expected_accept": true,
+      "before_accept": true,
+      "before_correct": true,
+      "after_accept": true,
+      "after_correct": true
+    },
+    {
+      "case": "legacy_proposal",
+      "expected_accept": true,
+      "before_accept": true,
+      "before_correct": true,
+      "after_accept": true,
+      "after_correct": true
+    },
+    {
+      "case": "sensitive_summary",
+      "expected_accept": false,
+      "before_accept": false,
+      "before_correct": true,
+      "after_accept": false,
+      "after_correct": true
+    },
+    {
+      "case": "missing_receipt",
+      "expected_accept": false,
+      "before_accept": true,
+      "before_correct": false,
+      "after_accept": false,
+      "after_correct": true
+    },
+    {
+      "case": "changed_subject",
+      "expected_accept": false,
+      "before_accept": true,
+      "before_correct": false,
+      "after_accept": false,
+      "after_correct": true
+    },
+    {
+      "case": "changed_receipt",
+      "expected_accept": false,
+      "before_accept": true,
+      "before_correct": false,
+      "after_accept": false,
+      "after_correct": true
+    },
+    {
+      "case": "failed_command",
+      "expected_accept": false,
+      "before_accept": true,
+      "before_correct": false,
+      "after_accept": false,
+      "after_correct": true
+    },
+    {
+      "case": "unbound_pass",
+      "expected_accept": false,
+      "before_accept": true,
+      "before_correct": false,
+      "after_accept": false,
+      "after_correct": true
+    },
+    {
+      "case": "no_executed_checks",
+      "expected_accept": false,
+      "before_accept": true,
+      "before_correct": false,
+      "after_accept": false,
+      "after_correct": true
+    },
+    {
+      "case": "outside_root",
+      "expected_accept": false,
+      "before_accept": true,
+      "before_correct": false,
+      "after_accept": false,
+      "after_correct": true
+    },
+    {
+      "case": "conflicting_summary",
+      "expected_accept": false,
+      "before_accept": true,
+      "before_correct": false,
+      "after_accept": false,
+      "after_correct": true
+    },
+    {
+      "case": "changed_ai_assessment",
+      "expected_accept": false,
+      "before_accept": true,
+      "before_correct": false,
+      "after_accept": false,
+      "after_correct": true
+    }
+  ],
+  "compatibility": [
+    {
+      "version": "before",
+      "dry_run_no_write": true,
+      "duplicate_idempotent": true,
+      "legacy_read_preserved": true
+    },
+    {
+      "version": "after",
+      "dry_run_no_write": true,
+      "duplicate_idempotent": true,
+      "legacy_read_preserved": true
+    }
+  ],
+  "readback_drift": [
+    {
+      "version": "before",
+      "changed_subject_flagged": false,
+      "history_unchanged": true
+    },
+    {
+      "version": "after",
+      "changed_subject_flagged": true,
+      "history_unchanged": true
+    }
+  ],
+  "untrusted_receipt_control": [
+    {
+      "version": "before",
+      "fabricated_consistent_receipt_accepted": true
+    },
+    {
+      "version": "after",
+      "fabricated_consistent_receipt_accepted": true
+    }
+  ],
+  "timing_dry_run_one_subject_one_receipt": {
+    "before": {
+      "repeats": 100,
+      "median_ms": 0.080479,
+      "p95_ms": 0.084167
+    },
+    "after": {
+      "repeats": 100,
+      "median_ms": 0.320729,
+      "p95_ms": 0.35625
+    }
+  },
+  "summary": {
+    "before": {
+      "correct": 3,
+      "total": 12,
+      "invalid_accepts": 9,
+      "valid_rejects": 0
+    },
+    "after": {
+      "correct": 12,
+      "total": 12,
+      "invalid_accepts": 0,
+      "valid_rejects": 0
+    }
+  }
+}

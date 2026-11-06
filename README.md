@@ -2,6 +2,12 @@
 
 English | [中文 README](README.zh-CN.md)
 
+## November 2026: verifiable skill maintenance
+
+The [Murphy Router package](murphy-skill-router/) now includes a work map, receipt-based verification, compatible historical review reading, and separate automatic/AI/human assessment states. [skill-system-upgrader](skill-system-upgrader/) provides the reusable diagnose → agree criteria → implement → verify workflow.
+
+The offline before/after experiments found **3/12 → 12/12 correct decisions on constructed evidence-validation scenarios**, while the paired local routing benchmark stayed at **123/124 Top-1**. The improvement demonstrated here is evidence validation, not routing accuracy. See the [method, results, limitations, and reproduction commands](experiments/verification-upgrade/README.zh-CN.md).
+
 An installable agent skill for routing user intent to the right skill, plugin, connector, app tool, or direct workflow.
 
 It is for people whose skill/plugin library has become useful enough to become hard to remember. The router treats each request like a small RAG query: understand intent, retrieve candidate routes, check evidence, rerank, expose the routing reason, then recommend or execute.
